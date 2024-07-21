@@ -5,6 +5,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea/
+db
 *.iws
 *.iml
 *.ipr
