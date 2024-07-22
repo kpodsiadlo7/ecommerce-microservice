@@ -3,9 +3,9 @@ server:
 
 spring:
   application:
-    name: auth-service
+    name: user-management
   datasource:
-    url: jdbc:h2:file:./app/adapters/auth-service/db/authDb
+    url: jdbc:h2:file:./app/adapters/user-management/db/userDb
     username: sa
     password: password
     driverClassName: org.h2.Driver

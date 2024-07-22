@@ -4,7 +4,8 @@ server:
 spring:
   application:
     name: gateway
-
+  main:
+    web-application-type: reactive
 #Eureka client
 eureka:
   client:
