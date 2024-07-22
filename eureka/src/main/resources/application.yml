@@ -1,5 +1,16 @@
 server:
   port: 8761
+
+spring:
+  datasource:
+    url: jdbc:h2:file:./eureka/db/eurekaDb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
 eureka:
   instance:
     hostname: localhost
