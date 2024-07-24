@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>cart-service</module>
-        <module>event-bus</module>
+        <module>eventbus</module>
         <module>order-service</module>
         <module>payment-service</module>
         <module>product-catalog</module>
