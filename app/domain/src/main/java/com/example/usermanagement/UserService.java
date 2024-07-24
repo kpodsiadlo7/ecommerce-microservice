@@ -1,20 +1,26 @@
 package com.example.usermanagement;
 
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
-    public ResponseEntity<?> processRegistration(String login, String password, String confirmPassword) {
-        String validationError = validateBeforeProcess(login, password, confirmPassword);
-        if (validationError != null) {
-            //process
+@RequiredArgsConstructor
+class UserService {
+
+    private final UserRepository userRepository;
+    private final UserManagement userManagement;
+
+    ResponseEntity<?> processRegistration(String login, String password, String confirmPassword) throws IllegalArgumentException {
+        String validationError = validateBeforeRegisterProcess(login, password, confirmPassword);
+        if (validationError == null) {
+            userManagement.registerUser(login,password);
+            return ResponseEntity.ok("User registered successful.");
         }
-        return new ResponseEntity<>(new ErrorResponse(validationError), HttpStatus.BAD_REQUEST);
+        throw new IllegalArgumentException(validationError);
     }
 
-    private String validateBeforeProcess(String login, String password, String confirmPassword) {
+    private String validateBeforeRegisterProcess(String login, String password, String confirmPassword) {
         if (login == null || password == null || confirmPassword == null) {
             return "Login, password, and confirmation password cannot be null.";
         }
@@ -26,6 +32,9 @@ public class UserService {
         }
         if (!password.equals(confirmPassword)) {
             return "Password and confirmation password do not match.";
+        }
+        if (userRepository.existsByUsername(login)) {
+            return "User already exists!";
         }
         return null;
     }

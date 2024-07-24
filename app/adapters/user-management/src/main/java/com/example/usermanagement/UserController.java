@@ -7,21 +7,25 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
+    private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
-    @GetMapping("/login")
-    String test() {
-        return "login działa";
-    }
-
-    @GetMapping(value = "/register")
+    @GetMapping("/register")
     ResponseEntity<?> register(@RequestParam final String login,
                                @RequestParam final String password,
-                               @RequestParam final String confirmPassword) {
-        return userService.processRegistration(login,password,confirmPassword);
+                               @RequestParam final String confirmPassword) throws IllegalArgumentException {
+        return userService.processRegistration(login, password, confirmPassword);
+    }
+
+    @GetMapping("/users")
+    List<UserRecord> getAllUsers() {
+        return userMapper.mapToDtoList(userRepository.findAll());
     }
 }

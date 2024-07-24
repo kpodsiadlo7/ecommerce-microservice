@@ -1,4 +1,4 @@
 package com.example.usermanagement;
 
-public class UserRecord {
+public record UserRecord(String uniqueUserId, String role) {
 }

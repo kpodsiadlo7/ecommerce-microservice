@@ -23,12 +23,13 @@ public class WebSecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
-                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(HttpMethod.GET,"/register").permitAll()
-                        .anyRequest().authenticated())
-                //.formLogin((form -> form.loginPage("/login").permitAll()))
-                .formLogin(Customizer.withDefaults());
+                        .requestMatchers(HttpMethod.GET, "/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
 }

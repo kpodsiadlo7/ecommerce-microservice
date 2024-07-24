@@ -1,8 +1,7 @@
 package com.example.usermanagement;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -10,16 +9,22 @@ import java.util.HashSet;
 @Entity
 @Table(name = "\"user\"")
 @Data
+@NoArgsConstructor
 public class User {
 
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
     private String uniqueUserId;
     private String username;
     private String password;
 
-    @Getter
-    @ManyToMany
-    private static Collection<Role> roles  = new HashSet<>();
+    User(String uniqueUserId, String username, String password, Role role){
+        this.uniqueUserId = uniqueUserId;
+        this.username = username;
+        this.password = password;
+        this.roles.add(role);
+    }
 
+    private Collection<Role> roles  = new HashSet<>();
 }
