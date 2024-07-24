@@ -3,6 +3,8 @@ package com.example.usermanagement.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +30,11 @@ public class GlobalErrorsHandler {
     public final ResponseEntity<?> handleNotFoundException(Exception ex) {
         log.warn("Not found exception {}", ex.getMessage());
         return new ResponseEntity<>(new ErrorDto(ex.getMessage(), HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(value = {BadCredentialsException.class, AuthenticationException.class})
+    public final ResponseEntity<?> handleAuthorizationException(AuthenticationException ex){
+        return new ResponseEntity<>(new ErrorDto(ex.getMessage(), HttpStatus.UNAUTHORIZED), HttpStatus.UNAUTHORIZED);
     }
 }
 

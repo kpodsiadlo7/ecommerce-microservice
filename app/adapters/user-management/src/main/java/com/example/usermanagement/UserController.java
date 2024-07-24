@@ -3,9 +3,10 @@ package com.example.usermanagement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
 
     @GetMapping("/register")
     ResponseEntity<?> register(@RequestParam final String login,
@@ -27,5 +29,18 @@ public class UserController {
     @GetMapping("/users")
     List<UserRecord> getAllUsers() {
         return userMapper.mapToDtoList(userRepository.findAll());
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestParam String login,
+                                        @RequestParam String password) {
+        Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(login, password);
+        Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
+
+        if (authenticationResponse.isAuthenticated()) {
+            return ResponseEntity.ok("User authenticated");
+        } else {
+            return ResponseEntity.status(401).body("Authentication failed");
+        }
     }
 }
