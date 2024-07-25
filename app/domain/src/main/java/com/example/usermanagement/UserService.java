@@ -4,12 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 @RequiredArgsConstructor
 class UserService {
 
     private final UserRepository userRepository;
     private final UserManagement userManagement;
+
 
     ResponseEntity<?> processRegistration(String login, String password, String confirmPassword) throws IllegalArgumentException {
         String validationError = validateBeforeRegisterProcess(login, password, confirmPassword);
@@ -37,5 +40,9 @@ class UserService {
             return "User already exists!";
         }
         return null;
+    }
+
+    public ResponseEntity<String> processLogin(final String login, final String password) throws IOException {
+        return userManagement.processLogin(login,password);
     }
 }

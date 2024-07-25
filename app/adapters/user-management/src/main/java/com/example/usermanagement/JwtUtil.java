@@ -15,7 +15,7 @@ import java.util.Date;
 @Component
 class JwtUtil {
 
-    public String generateToken(String username, String uniqueUserId) throws IOException {
+    public String generateToken(final String uniqueUserId) throws IOException {
         // 1 day
         long expirationTime = 86400000;
         return Jwts.builder()

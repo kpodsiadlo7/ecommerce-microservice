@@ -1,5 +1,6 @@
 package com.example.usermanagement;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,11 +36,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7);
+            if (jwtUtil.isTokenExpired(jwt)) {
+                throw new ExpiredJwtException(null, null, "JWT Token expired!");
+            }
             uniqueUserId = jwtUtil.extractUniqueUserId(jwt);
         }
 
         if (uniqueUserId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String username  = userRepository.findByUniqueUserId(uniqueUserId).getUsername();
+            String username = userRepository.findByUniqueUserId(uniqueUserId).getUsername();
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
             if (jwtUtil.extractClaims(jwt).getExpiration().after(new Date())) {

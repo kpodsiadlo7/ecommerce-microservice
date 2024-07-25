@@ -1,7 +1,5 @@
 package com.example.usermanagement.exception;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

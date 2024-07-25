@@ -34,7 +34,6 @@ public class WebSecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers(HttpMethod.GET,"/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .anyRequest()
                         .authenticated())
