@@ -8,16 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -52,7 +48,8 @@ public class UserController {
 
         if (authenticationResponse.isAuthenticated()) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(login);
-            String jwt = jwtUtil.generateToken(userDetails.getUsername());
+            String uniqueUserId = userRepository.findByUsername(userDetails.getUsername()).getUniqueUserId();
+            String jwt = jwtUtil.generateToken(userDetails.getUsername(), uniqueUserId);
             return ResponseEntity.ok(jwt);
         } else {
             return ResponseEntity.status(401).body("Authentication failed");
@@ -61,6 +58,6 @@ public class UserController {
 
     @GetMapping("/test")
     public UserRecord getUserTestSecurity() {
-        return userMapper.mapToDto(userRepository.findByUsername("2"));
+        return userMapper.mapToDto(userRepository.findByUsername("login"));
     }
 }

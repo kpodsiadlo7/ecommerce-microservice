@@ -6,6 +6,7 @@ target/
 ### IntelliJ IDEA ###
 .idea/
 db
+key.txt
 app/adapters/user-management/key.txt
 *.iws
 *.iml

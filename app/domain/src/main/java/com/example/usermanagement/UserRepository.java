@@ -10,4 +10,5 @@ interface UserRepository {
     boolean existsByUniqueUserId(String uniqueUserId);
     User save(User user);
     List<User> findAll();
+    User findByUniqueUserId(String uniqueUserId);
 }

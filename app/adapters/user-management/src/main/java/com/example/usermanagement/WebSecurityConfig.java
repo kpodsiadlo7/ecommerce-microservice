@@ -36,11 +36,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        //.requestMatchers("/logout").authenticated()
                         .anyRequest()
                         .authenticated())
-                //.formLogin(AbstractAuthenticationFilterConfigurer::permitAll)
-                //.logout(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 

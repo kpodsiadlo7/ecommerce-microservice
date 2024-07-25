@@ -15,11 +15,12 @@ import java.util.Date;
 @Component
 class JwtUtil {
 
-    public String generateToken(String username) throws IOException {
+    public String generateToken(String username, String uniqueUserId) throws IOException {
         // 1 day
         long expirationTime = 86400000;
         return Jwts.builder()
-                .setSubject(username)
+                //.setSubject(username)
+                .setSubject(uniqueUserId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(SignatureAlgorithm.HS512, provideKey())
@@ -30,7 +31,7 @@ class JwtUtil {
         return new String(Files.readAllBytes(Paths.get("key.txt")));
     }
 
-    public String extractUsername(String token) throws IOException {
+    public String extractUniqueUserId(String token) throws IOException {
         return extractClaims(token).getSubject();
     }
 
