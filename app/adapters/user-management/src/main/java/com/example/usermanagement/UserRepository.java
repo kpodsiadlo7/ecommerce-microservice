@@ -3,15 +3,15 @@ package com.example.usermanagement;
 import java.util.List;
 
 interface UserRepository {
-    User findByUsername(String username);
+    UserEntity findByUsername(String username);
 
     boolean existsByUsername(String username);
 
     boolean existsByUniqueUserId(String uniqueUserId);
 
-    User save(User user);
+    UserEntity save(UserEntity user);
 
-    List<User> findAll();
+    List<UserEntity> findAll();
 
-    User findByUniqueUserId(String uniqueUserId);
+    UserEntity findByUniqueUserId(String uniqueUserId);
 }
