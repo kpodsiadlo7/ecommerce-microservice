@@ -1,14 +1,12 @@
 package com.example.productcatalog;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,6 +21,11 @@ public class ProductController {
     @GetMapping
     ResponseEntity<List<ProductRecord>> getAllProducts() {
         return ResponseEntity.ok(productMapper.toRecordList(productService.getProducts()));
+    }
+
+    @GetMapping("/product/{productId}")
+    ResponseEntity<ProductRecord> getProductById(@PathVariable @NotNull Long productId){
+        return ResponseEntity.ok(productMapper.toRecord(productService.getProductById(productId)));
     }
 
     @PostMapping("/product")

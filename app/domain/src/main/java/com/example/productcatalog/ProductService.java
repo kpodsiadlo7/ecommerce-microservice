@@ -23,4 +23,8 @@ public class ProductService {
         );
         return productManagement.saveProduct(productToSave);
     }
+
+    public Product getProductById(Long productId) {
+        return productManagement.getProductById(productId);
+    }
 }

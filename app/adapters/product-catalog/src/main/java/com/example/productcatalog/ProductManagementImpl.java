@@ -1,5 +1,6 @@
 package com.example.productcatalog;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,5 +33,11 @@ public class ProductManagementImpl implements ProductManagement {
         );
         productRepository.save(productEntity);
         return productMapper.toDomain(productEntity);
+    }
+
+    @Override
+    public Product getProductById(Long productId) {
+        return productMapper.toDomain(productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found")));
     }
 }
