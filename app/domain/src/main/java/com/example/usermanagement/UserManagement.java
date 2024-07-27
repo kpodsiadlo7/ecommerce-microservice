@@ -1,11 +1,13 @@
 package com.example.usermanagement;
 
-import org.springframework.http.ResponseEntity;
-
 import java.io.IOException;
 
 interface UserManagement {
-    void registerUser(final String login, final String password);
+    void registerUser(User user);
 
-    ResponseEntity<String> processLogin(final String login, final String password) throws IOException;
+    String processLogin(final LoginRequest loginRequest) throws IOException;
+
+    boolean isIdAlreadyExists(String uniqueUserId);
+
+    boolean isUserAlreadyExists(String login);
 }

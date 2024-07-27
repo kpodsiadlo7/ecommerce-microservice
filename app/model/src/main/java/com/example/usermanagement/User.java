@@ -1,30 +1,18 @@
 package com.example.usermanagement;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 
 import java.util.Collection;
-import java.util.HashSet;
 
-@Entity
-@Table(name = "\"user\"")
 @Data
-@NoArgsConstructor
+@Getter
+@AllArgsConstructor
 public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
     private String uniqueUserId;
     private String username;
     private String password;
-
-    User(String uniqueUserId, String username, String password, Role role){
-        this.uniqueUserId = uniqueUserId;
-        this.username = username;
-        this.password = password;
-        this.roles.add(role);
-    }
-
-    private Collection<Role> roles  = new HashSet<>();
+    private Collection<Role> roles;
 }
