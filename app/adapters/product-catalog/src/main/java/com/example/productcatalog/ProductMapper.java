@@ -44,4 +44,14 @@ public class ProductMapper {
                 productEntity.getQty()
         );
     }
+
+    Product fromRecord(ProductRecord productRecord){
+        return new Product(
+                productRecord.id(),
+                productRecord.title(),
+                productRecord.description(),
+                productRecord.price(),
+                productRecord.qty()
+        );
+    }
 }

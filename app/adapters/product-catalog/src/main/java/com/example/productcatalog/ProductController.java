@@ -12,25 +12,32 @@ import java.util.List;
 
 @Validated
 @RestController
+@RequestMapping("/product")
 @RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
 
-    @GetMapping
+    @GetMapping("/all")
     ResponseEntity<List<ProductRecord>> getAllProducts() {
         return ResponseEntity.ok(productMapper.toRecordList(productService.getProducts()));
     }
 
-    @GetMapping("/product/{productId}")
-    ResponseEntity<ProductRecord> getProductById(@PathVariable @NotNull Long productId){
+    @GetMapping("/{productId}")
+    ResponseEntity<ProductRecord> getProductById(@PathVariable @NotNull Long productId) {
         return ResponseEntity.ok(productMapper.toRecord(productService.getProductById(productId)));
     }
 
-    @PostMapping("/product")
+    @PostMapping
     ResponseEntity<ProductRecord> createProduct(@RequestBody @Valid ProductCreateRequest product) {
         var response = productMapper.toRecord(productService.createProduct(product));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/update")
+    ResponseEntity<ProductRecord> updateProduct(@RequestBody ProductRecord productRecord) {
+        var response = productMapper.toRecord(productService.updateProduct(productMapper.fromRecord(productRecord)));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

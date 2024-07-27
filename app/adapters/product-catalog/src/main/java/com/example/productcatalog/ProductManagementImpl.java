@@ -25,7 +25,7 @@ public class ProductManagementImpl implements ProductManagement {
     @Transactional
     public Product saveProduct(Product productToSave) {
         ProductEntity productEntity = new ProductEntity(
-                null,
+                productToSave.getId(),
                 productToSave.getTitle(),
                 productToSave.getDescription(),
                 productToSave.getPrice(),
