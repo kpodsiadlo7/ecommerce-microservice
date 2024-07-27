@@ -1,17 +1,14 @@
 package com.example.usermanagement;
 
-import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-interface UserRepository {
-    UserEntity findByUsername(String username);
-
-    boolean existsByUsername(String username);
+interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     boolean existsByUniqueUserId(String uniqueUserId);
 
-    UserEntity save(UserEntity user);
+    boolean existsByUsername(String login);
 
-    List<UserEntity> findAll();
+    UserEntity findByUsername(String username);
 
     UserEntity findByUniqueUserId(String uniqueUserId);
 }

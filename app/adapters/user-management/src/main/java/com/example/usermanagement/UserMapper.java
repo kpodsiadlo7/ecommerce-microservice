@@ -10,13 +10,6 @@ public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
 
-    UserRecord mapToDto(User user) {
-        return new UserRecord(
-                user.getUniqueUserId(),
-                user.getRoles().toString()
-        );
-    }
-
     public UserEntity toEntity(User user) {
         return new UserEntity(
                 null,

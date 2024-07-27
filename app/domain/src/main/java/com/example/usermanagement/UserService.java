@@ -12,8 +12,10 @@ class UserService {
     private final UserManagement userManagement;
 
     String processRegistration(String login, String password, String confirmPassword) throws IllegalArgumentException {
+        System.out.println("processRegistration");
         String validationError = validateBeforeRegisterProcess(login, password, confirmPassword);
         if (validationError == null) {
+            System.out.println("validationError == null");
             User user = new User(
                     null,
                     generateUniqueUserId(),
@@ -35,15 +37,7 @@ class UserService {
     }
 
     private String validateBeforeRegisterProcess(String login, String password, String confirmPassword) {
-        if (login == null || password == null || confirmPassword == null) {
-            return "Login, password, and confirmation password cannot be null.";
-        }
-        if (login.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            return "Login, password, and confirmation password cannot be empty.";
-        }
-        if (password.length() > 16 || confirmPassword.length() > 16) {
-            return "Password must be maximum 16 characters long.";
-        }
+        System.out.println("validateBeforeRegisterProcess");
         if (!password.equals(confirmPassword)) {
             return "Password and confirmation password do not match.";
         }
@@ -53,7 +47,7 @@ class UserService {
         return null;
     }
 
-    public String processLogin(final String login, final String password) throws IOException {
-        return userManagement.processLogin(login, password);
+    public String processLogin(final LoginRequest loginRequest) throws IOException {
+        return userManagement.processLogin(loginRequest);
     }
 }

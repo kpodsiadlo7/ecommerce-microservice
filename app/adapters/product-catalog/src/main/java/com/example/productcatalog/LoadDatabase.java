@@ -24,14 +24,15 @@ class LoadDatabase {
     CommandLineRunner initDatabase() {
         return args -> {
             if (productRepository.count() == 0) {
-                List<Product> productList = new ArrayList<>();
+                List<ProductEntity> productList = new ArrayList<>();
                 for (int i = 0; i <= 35; i++) {
-                    productList.add(Product.builder()
-                            .name("Product" + i)
-                            .title("Title" + i)
-                            .description("Description" + i)
-                            .price(generateRandomPrice())
-                            .qty(generateRandomQty()).build());
+                    productList.add(new ProductEntity(
+                            null,
+                            "Title" + i,
+                            "Description" + i,
+                            generateRandomValue(),
+                            generateRandomValue().intValue()
+                    ));
                 }
                 productRepository.saveAll(productList);
                 log.info("Db: {}", productRepository.count());
@@ -39,11 +40,7 @@ class LoadDatabase {
         };
     }
 
-    private int generateRandomQty() {
-        return 10 + (200 - 10) * random.nextInt();
-    }
-
-    private BigDecimal generateRandomPrice() {
+    private BigDecimal generateRandomValue() {
 
         double randomPrice = 10 + (200 - 10) * random.nextDouble();
         return BigDecimal.valueOf(randomPrice).setScale(2, RoundingMode.HALF_UP);

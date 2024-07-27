@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +27,14 @@ class UserManagementImpl implements UserManagement {
     @Override
     @Transactional
     public void registerUser(User user) {
+        log.info("registerUser");
         UserEntity userToSave = userMapper.toEntity(user);
         userRepository.save(userToSave);
     }
 
-    public String processLogin(final String login, final String password) throws IOException {
-        Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(login, password);
+    public String processLogin(final LoginRequest loginRequest) throws IOException {
+        String login = loginRequest.login();
+        Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(login, loginRequest.password());
         Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
 
         if (authenticationResponse.isAuthenticated()) {

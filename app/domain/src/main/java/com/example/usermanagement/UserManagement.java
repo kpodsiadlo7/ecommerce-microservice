@@ -5,7 +5,7 @@ import java.io.IOException;
 interface UserManagement {
     void registerUser(User user);
 
-    String processLogin(final String login, final String password) throws IOException;
+    String processLogin(final LoginRequest loginRequest) throws IOException;
 
     boolean isIdAlreadyExists(String uniqueUserId);
 

@@ -2,10 +2,12 @@ package com.example.usermanagement;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.Collection;
 
 @Data
+@Getter
 @AllArgsConstructor
 public class User {
     private Long id;
