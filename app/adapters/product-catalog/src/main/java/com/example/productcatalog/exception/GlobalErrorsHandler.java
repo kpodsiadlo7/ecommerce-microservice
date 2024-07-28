@@ -1,6 +1,7 @@
 package com.example.productcatalog.exception;
 
 import com.example.usermanagement.exception.ErrorRecord;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,5 +28,11 @@ public class GlobalErrorsHandler {
     public final ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.warn("Missing parameter {}", ex.getMessage());
         return new ResponseEntity<>(new ErrorRecord("Required request body is missing or invalid", HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {EntityNotFoundException.class})
+    public final ResponseEntity<?> handleNotFoundException(EntityNotFoundException ex) {
+        log.warn("Not found exception {}", ex.getMessage());
+        return new ResponseEntity<>(new ErrorRecord(ex.getMessage(), HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
     }
 }
