@@ -1,12 +1,16 @@
 package com.example.usermanagement;
 
+import com.s2s.JwtUtil;
+import com.s2s.KeyProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +25,9 @@ class UserManagementImpl implements UserManagement {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-    private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
+    @Value("${key.path}")
+    private String keyPath;
 
     @Override
     @Transactional
@@ -39,8 +44,10 @@ class UserManagementImpl implements UserManagement {
 
         if (authenticationResponse.isAuthenticated()) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(login);
-            String uniqueUserId = userRepository.findByUsername(userDetails.getUsername()).getUniqueUserId();
-            return jwtUtil.generateToken(uniqueUserId);
+            String uniqueUserId = userRepository.findByUsername(userDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userDetails.getUsername())).getUniqueUserId();
+            log.warn("UniqueUserId {}",uniqueUserId);
+            return JwtUtil.generateToken("user-management", uniqueUserId, KeyProvider.provideKey(keyPath));
         } else {
             throw new AuthenticationException("Authentication failed");
         }

@@ -11,6 +11,7 @@ import java.util.Base64;
 public class KeyProvider {
 
     public static SecretKey provideKey(String path) throws IOException {
+        System.out.println("key path " + path);
         String keyString = new String(Files.readAllBytes(Paths.get(path)));
         byte[] decodedKey = Base64.getDecoder().decode(keyString);
         return Keys.hmacShaKeyFor(decodedKey);

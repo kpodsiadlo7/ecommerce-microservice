@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.HashSet;
 @Entity
 @Getter
 @RequiredArgsConstructor
+@AllArgsConstructor
 class UserEntity {
 
     @Id
@@ -22,12 +24,4 @@ class UserEntity {
     private String username;
     private String password;
     private Collection<Role> roles = new HashSet<>();
-
-    UserEntity(Long id, String uniqueUserId, String username, String password, Collection<Role> roles) {
-        this.id = id;
-        this.uniqueUserId = uniqueUserId;
-        this.username = username;
-        this.password = password;
-        this.roles = roles;
-    }
 }
