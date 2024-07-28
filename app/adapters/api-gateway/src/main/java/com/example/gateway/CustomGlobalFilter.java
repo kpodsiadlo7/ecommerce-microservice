@@ -2,6 +2,7 @@ package com.example.gateway;
 
 import com.s2s.JwtUtil;
 import com.s2s.KeyProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,8 @@ import java.io.IOException;
 @Configuration
 public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
-    private static final String KEY_PATH = "app/adapters/api-gateway/key.txt";
+    @Value("${key.path}")
+    private String keyPath;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -30,7 +32,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         try {
             if (checkCondition(exchange)) {
                 String uniqueUserId = "exampleUniqueUserId";
-                String newToken = JwtUtil.generateToken("gateway", uniqueUserId, KeyProvider.provideKey(KEY_PATH));
+                String newToken = JwtUtil.generateToken("gateway", uniqueUserId, KeyProvider.provideKey(keyPath));
                 ServerWebExchange updatedExchange = updateHeader(exchange, newToken, uniqueUserId);
 
                 return chain.filter(updatedExchange);
