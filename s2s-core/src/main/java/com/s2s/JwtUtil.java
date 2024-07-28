@@ -4,19 +4,21 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class JwtUtil {
 
-    public static boolean verifySystemToken(String token, SecretKey systemKey) {
+    public static void verifySystemToken(String token, SecretKey systemKey) {
         try {
             Jws<Claims> claims = extractClaims(token, systemKey);
-            return claims != null;
+            if (claims == null) {
+                throw new JwtException("Token is not signed by trusted services!");
+            }
         } catch (Exception e) {
             throw new JwtException("Token is not signed by trusted services!");
         }
@@ -29,7 +31,7 @@ public class JwtUtil {
                 .parseClaimsJws(token);
     }
 
-    static boolean isTokenExpired(final String token) throws IOException {
+    public static boolean isTokenExpired(final String token) {
         return extractClaimsWithoutVerification(token).getExpiration().before(new Date());
     }
 
@@ -38,5 +40,23 @@ public class JwtUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+
+    public static String generateToken(final String systemName, final String uniqueUserId, final SecretKey secretKey) throws IOException {
+        // 1 day
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("system", systemName);
+        long expirationTime = 86400000;
+        return Jwts.builder()
+                .setSubject(uniqueUserId)
+                .setClaims(claims)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public static String extractUniqueUserId(String token, SecretKey secretKey) throws IOException {
+        return extractClaims(token, secretKey).getBody().getSubject();
     }
 }

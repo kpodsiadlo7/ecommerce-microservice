@@ -1,7 +1,10 @@
 package com.example.usermanagement;
 
+import com.s2s.JwtUtil;
+import com.s2s.KeyProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.SecretKey;
 import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 
@@ -21,8 +25,10 @@ class UserManagementImpl implements UserManagement {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
-    private final JwtUtil jwtUtil;
     private final UserMapper userMapper;
+
+    @Value("${key.path}")
+    private String keyPath;
 
     @Override
     @Transactional
@@ -40,7 +46,8 @@ class UserManagementImpl implements UserManagement {
         if (authenticationResponse.isAuthenticated()) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(login);
             String uniqueUserId = userRepository.findByUsername(userDetails.getUsername()).getUniqueUserId();
-            return jwtUtil.generateToken(uniqueUserId);
+            SecretKey secretKey = KeyProvider.provideKey(keyPath);
+            return JwtUtil.generateToken("user-management", uniqueUserId, secretKey);
         } else {
             throw new AuthenticationException("Authentication failed");
         }

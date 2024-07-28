@@ -20,3 +20,6 @@ eureka:
       defaultZone: http://localhost:8761/eureka
     registerWithEureka: true
     fetchRegistry: true
+
+key:
+  path: key.txt

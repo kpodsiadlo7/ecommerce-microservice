@@ -24,6 +24,4 @@ public class Configuration {
             S2SVerification.addToTrustedStore("user-management", KeyProvider.provideKey(PATH_KEY));
         };
     }
-
-
 }
