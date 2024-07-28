@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class ProductService {
+class ProductService {
 
     private final ProductManagement productManagement;
 
@@ -13,7 +13,7 @@ public class ProductService {
         return productManagement.getProducts();
     }
 
-    public Product createProduct(ProductCreateRequest product) {
+    Product createProduct(ProductCreateRequest product) {
         Product productToSave = new Product(
                 null,
                 product.title(),
@@ -24,11 +24,11 @@ public class ProductService {
         return productManagement.saveProduct(productToSave);
     }
 
-    public Product getProductById(Long productId) {
+    Product getProductById(Long productId) {
         return productManagement.getProductById(productId);
     }
 
-    public Product updateProduct(Product product) {
+    Product updateProduct(Product product) {
         Product productFromDb = productManagement.getProductById(product.getId());
         Product productToUpdate = new Product();
         if(productFromDb != null){

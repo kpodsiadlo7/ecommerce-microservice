@@ -1,21 +1,21 @@
-package com.example.productcatalog;
+package com.example.cartservice;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-class Product {
+class Cart {
     private Long id;
-    private String title;
-    private String description;
-    private BigDecimal price;
-    private Integer qty;
+    private String userId;
+    private List<Product> products = new ArrayList<>();
+    private BigDecimal totalPrice;
 }

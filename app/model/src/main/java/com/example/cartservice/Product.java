@@ -1,6 +1,5 @@
-package com.example.productcatalog;
+package com.example.cartservice;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
