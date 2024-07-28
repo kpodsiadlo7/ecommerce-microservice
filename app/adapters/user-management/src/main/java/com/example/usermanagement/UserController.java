@@ -2,6 +2,7 @@ package com.example.usermanagement;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Role;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +13,6 @@ import java.io.IOException;
 @Validated
 @RestController
 @RequiredArgsConstructor
-
 public class UserController {
 
     private final UserService userService;
@@ -30,8 +30,13 @@ public class UserController {
         return ResponseEntity.ok(userService.processLogin(loginRequest));
     }
 
-    @GetMapping("/private")
+    @GetMapping("/profile")
     public String authenticate() {
-        return "ok";
+        return "Only user can reach this endpoint";
+    }
+
+    @GetMapping("/check-user")
+    public String checkUser() {
+        return "Only system can reach this endpoint.";
     }
 }

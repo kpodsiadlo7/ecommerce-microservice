@@ -47,7 +47,7 @@ class UserManagementImpl implements UserManagement {
             String uniqueUserId = userRepository.findByUsername(userDetails.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userDetails.getUsername())).getUniqueUserId();
             log.warn("UniqueUserId {}",uniqueUserId);
-            return JwtUtil.generateToken("user-management", uniqueUserId, KeyProvider.provideKey(keyPath));
+            return JwtUtil.generateToken("user-management", uniqueUserId, KeyProvider.provideKey(keyPath), "USER");
         } else {
             throw new AuthenticationException("Authentication failed");
         }

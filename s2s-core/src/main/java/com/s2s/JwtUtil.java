@@ -41,12 +41,13 @@ public class JwtUtil {
         return parser.parseClaimsJwt(unsignedToken).getBody();
     }
 
-    public static String generateToken(final String systemName, final String uniqueUserId, final SecretKey secretKey) throws IOException {
+    public static String generateToken(final String systemName, final String uniqueUserId, final SecretKey secretKey, final String role) throws IOException {
         System.out.println("generate new token");
         // 1 day
         Map<String, Object> claims = new HashMap<>();
         claims.put("system", systemName);
         claims.put("sub", uniqueUserId);
+        claims.put("role", role);
         long expirationTime = 86400000;
         return Jwts.builder()
                 .setClaims(claims)
@@ -56,8 +57,12 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static String extractUniqueUserId(final String token, final SecretKey secretKey) {
+    public static JwtDetails extractUniqueUserId(final String token, final SecretKey secretKey) {
         System.out.println("extract unique user id ");
-        return extractClaims(token, secretKey).getBody().getSubject();
+        Jws<Claims> claimsJws = extractClaims(token, secretKey);
+        return new JwtDetails(
+                claimsJws.getBody().getSubject(),
+                claimsJws.getBody().get("role").toString()
+        );
     }
 }
