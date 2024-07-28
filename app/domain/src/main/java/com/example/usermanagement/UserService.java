@@ -1,6 +1,7 @@
 package com.example.usermanagement;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -48,6 +49,8 @@ class UserService {
     }
 
     public String processLogin(final LoginRequest loginRequest) throws IOException {
+        System.out.println("UserService processLogin login "+loginRequest.login());
+
         return userManagement.processLogin(loginRequest);
     }
 }

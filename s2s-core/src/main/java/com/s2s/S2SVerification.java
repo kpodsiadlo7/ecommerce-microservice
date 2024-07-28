@@ -15,8 +15,12 @@ public class S2SVerification {
         trustedServicesStore.put(appName, secretKey);
     }
 
-    public boolean checkSystem(String system){
+    public static boolean checkSystem(String system){
         return trustedServicesStore.containsKey(system);
+    }
+
+    public static SecretKey getSecretSystemKey(String systemName){
+        return trustedServicesStore.get(systemName);
     }
 
     public static void verifyRequest(String token) {

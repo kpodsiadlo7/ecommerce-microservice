@@ -22,4 +22,4 @@ eureka:
     fetchRegistry: true
 
 key:
-  path: key.txt
+  path: app/adapters/user-management/key.txt

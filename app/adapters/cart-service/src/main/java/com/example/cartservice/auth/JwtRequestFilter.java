@@ -12,6 +12,7 @@ import java.io.IOException;
 public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        logger.info("start filter");
         final String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader == null) throw new ServletException("Token is not exists!");
 

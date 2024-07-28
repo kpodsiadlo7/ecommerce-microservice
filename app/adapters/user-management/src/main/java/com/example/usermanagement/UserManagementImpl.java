@@ -10,10 +10,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.SecretKey;
 import javax.security.sasl.AuthenticationException;
 import java.io.IOException;
 
@@ -26,7 +26,6 @@ class UserManagementImpl implements UserManagement {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final UserMapper userMapper;
-
     @Value("${key.path}")
     private String keyPath;
 
@@ -45,9 +44,10 @@ class UserManagementImpl implements UserManagement {
 
         if (authenticationResponse.isAuthenticated()) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(login);
-            String uniqueUserId = userRepository.findByUsername(userDetails.getUsername()).getUniqueUserId();
-            SecretKey secretKey = KeyProvider.provideKey(keyPath);
-            return JwtUtil.generateToken("user-management", uniqueUserId, secretKey);
+            String uniqueUserId = userRepository.findByUsername(userDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userDetails.getUsername())).getUniqueUserId();
+            log.warn("UniqueUserId {}",uniqueUserId);
+            return JwtUtil.generateToken("user-management", uniqueUserId, KeyProvider.provideKey(keyPath));
         } else {
             throw new AuthenticationException("Authentication failed");
         }
