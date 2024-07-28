@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserMapper {
+class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity toEntity(User user) {
+    UserEntity toEntity(User user) {
         return new UserEntity(
                 null,
                 user.getUniqueUserId(),

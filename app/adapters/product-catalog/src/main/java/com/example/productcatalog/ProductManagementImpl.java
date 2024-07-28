@@ -11,7 +11,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ProductManagementImpl implements ProductManagement {
+class ProductManagementImpl implements ProductManagement {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;

@@ -1,20 +1,19 @@
-package com.example.productcatalog;
+package com.example.cartservice;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
+@Entity(name = "products")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-class ProductEntity {
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -22,4 +21,7 @@ class ProductEntity {
     private String description;
     private BigDecimal price;
     private int qty;
+
+    @ManyToMany
+    private List<CartEntity> carts = new ArrayList<>();
 }

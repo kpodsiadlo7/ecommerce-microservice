@@ -13,7 +13,7 @@ import java.util.HashSet;
 @Entity
 @Getter
 @RequiredArgsConstructor
-public class UserEntity {
+class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
