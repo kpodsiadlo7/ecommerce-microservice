@@ -16,4 +16,12 @@ public class JwtDetails {
     public String getRole() {
         return role;
     }
+
+    @Override
+    public String toString() {
+        return "JwtDetails{" +
+                "userId='" + userId + '\'' +
+                ", role='" + role + '\'' +
+                '}';
+    }
 }

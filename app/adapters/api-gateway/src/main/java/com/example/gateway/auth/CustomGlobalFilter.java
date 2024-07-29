@@ -50,14 +50,12 @@ public class CustomGlobalFilter implements WebFilter {
         }
 
         try {
-            if (checkTokenCondition() && checkUser(token)) {
-                JwtDetails jwtDetails = JwtUtil.extractUniqueUserId(token, getSecretKeyFromTrustedStore("user-management"));
+            if (checkTokenCondition() && checkUser()) {
+                JwtDetails jwtDetails = JwtUtil.extractJwtDetails(token, getSecretKeyFromTrustedStore("user-management"));
                 String uniqueUserId = jwtDetails.getUserId();
                 String newToken = JwtUtil.generateToken("gateway", uniqueUserId, getSecretKey(), "SYSTEM");
                 log.warn("Token is valid, new token generated");
                 exchange = replaceUserTokenWithGatewayToken(exchange, newToken, uniqueUserId);
-            } else {
-                return Mono.error(new JwtException("Authorization header is missing or invalid"));
             }
         } catch (Exception e) {
             return Mono.error(new JwtException("Invalid token", e));
@@ -65,13 +63,13 @@ public class CustomGlobalFilter implements WebFilter {
         return chain.filter(exchange);
     }
 
-    private boolean checkUser(final String token) {
-        return userManagementClient.checkUser(token);
+    private boolean checkUser() throws IOException {
+        String systemToken = JwtUtil.generateToken("gateway", null, getSecretKey(), "SYSTEM");
+        return userManagementClient.checkUser(token, "Bearer " + systemToken);
     }
 
     private SecretKey getSecretKeyFromTrustedStore(String systemName) throws IllegalAccessException {
         if (S2SVerification.checkSystemIsRecognized(systemName)) {
-            log.info("Klucz {}", S2SVerification.getSecretSystemKey(systemName));
             return S2SVerification.getSecretSystemKey(systemName);
         }
         throw new IllegalAccessException("System is not recognized");
@@ -79,7 +77,7 @@ public class CustomGlobalFilter implements WebFilter {
 
     private boolean checkTokenCondition() {
         log.info("check condition");
-        return token != null && !S2SVerification.verifyRequest(token);
+        return token != null && S2SVerification.verifyRequest(token);
     }
 
     private String extractTokenFromRequest(ServerHttpRequest request) {
@@ -91,6 +89,7 @@ public class CustomGlobalFilter implements WebFilter {
     }
 
     private ServerWebExchange replaceUserTokenWithGatewayToken(ServerWebExchange exchange, String newToken, String uniqueUserId) {
+        log.info("replace user token with gateway token");
         ServerHttpRequest request = exchange.getRequest().mutate()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + newToken)
                 .header("PublicUserId", uniqueUserId)

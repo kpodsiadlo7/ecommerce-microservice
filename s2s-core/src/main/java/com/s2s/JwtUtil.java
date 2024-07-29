@@ -4,7 +4,6 @@ import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,9 +14,11 @@ public class JwtUtil {
         try {
             Jws<Claims> claims = extractClaims(token, systemKey);
             if (claims == null) {
+                System.out.println("claims jest null");
                 throw new JwtException("Token is not signed by trusted service!");
             }
         } catch (Exception e) {
+            System.out.println("nie jest podpisany przez zaufany system");
             throw new JwtException("Token is not signed by trusted service!");
         }
     }
@@ -57,9 +58,10 @@ public class JwtUtil {
                 .compact();
     }
 
-    public static JwtDetails extractUniqueUserId(final String token, final SecretKey secretKey) {
-        System.out.println("extract unique user id ");
+    public static JwtDetails extractJwtDetails(final String token, final SecretKey secretKey) {
+        System.out.println("extract unique user id");
         Jws<Claims> claimsJws = extractClaims(token, secretKey);
+        System.out.println(claimsJws);
         return new JwtDetails(
                 claimsJws.getBody().getSubject(),
                 claimsJws.getBody().get("role").toString()

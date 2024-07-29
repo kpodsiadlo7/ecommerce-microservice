@@ -2,7 +2,8 @@ package com.example.usermanagement;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Role;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
 
     @PostMapping("/register")
@@ -36,7 +38,8 @@ public class UserController {
     }
 
     @GetMapping("/check-user")
-    public String checkUser() {
-        return "Only system can reach this endpoint.";
+    public boolean checkUser(@RequestParam String token, @RequestHeader("Authorization") String authorization) {
+        log.warn("Only system can reach this endpoint.");
+        return true;
     }
 }

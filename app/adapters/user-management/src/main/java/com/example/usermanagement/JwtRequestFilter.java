@@ -2,7 +2,6 @@ package com.example.usermanagement;
 
 import com.s2s.JwtDetails;
 import com.s2s.JwtUtil;
-import com.s2s.KeyProvider;
 import com.s2s.S2SVerification;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,19 +28,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+        logger.info("filter started");
 
         final String authorizationHeader = request.getHeader("Authorization");
         String jwt = null;
         JwtDetails jwtDetails = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            logger.info("bearer started");
             jwt = authorizationHeader.substring(7);
             S2SVerification.verifyRequest(jwt);
-            jwtDetails = JwtUtil.extractUniqueUserId(jwt, KeyProvider.provideKey(keyPath));
+            jwtDetails = JwtUtil.extractJwtDetails(jwt, S2SVerification.getSecretKeyBySystem(jwt));
+            logger.info("jwtDetails: "+jwtDetails);
         }
 
-        if (jwtDetails != null && jwtDetails.getUserId() != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (jwtDetails != null && jwtDetails.getRole() != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             String role = jwtDetails.getRole();
+            logger.info("Role: " + role);
             Authentication authentication = new UsernamePasswordAuthenticationToken(jwt, null,
                     AuthorityUtils.createAuthorityList("ROLE_" + role));
             SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -25,7 +25,9 @@ public class S2SVerification {
 
     public static boolean verifyRequest(String token) {
         SecretKey key = validTokenBeforeVerify(token);
+        System.out.println("klucz jest nul?" +key);
         if (key != null) {
+            System.out.println("klucz jest git");
             JwtUtil.verifySystemToken(token, key);
             return true;
         }
@@ -42,6 +44,11 @@ public class S2SVerification {
             throw new JwtException("Token is expired!");
         }
         return key;
+    }
+
+    public static SecretKey getSecretKeyBySystem(String token){
+        String systemName = getSystemName(token);
+        return getSecretSystemKey(systemName);
     }
 
     private static String getSystemName(String token) {

@@ -32,3 +32,9 @@ key:
 
 user-management:
   url: http://localhost:9040
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
