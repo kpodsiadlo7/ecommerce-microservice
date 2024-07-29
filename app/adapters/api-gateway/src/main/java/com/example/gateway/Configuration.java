@@ -2,12 +2,15 @@ package com.example.gateway;
 
 import com.example.apigateway.UserManagementClient;
 import com.example.gateway.auth.CustomGlobalFilter;
+import com.example.gateway.exception.GlobalErrorsHandler;
 import com.s2s.KeyProvider;
 import com.s2s.S2SVerification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.annotation.Order;
+import org.springframework.web.server.WebExceptionHandler;
 
 @RequiredArgsConstructor
 @org.springframework.context.annotation.Configuration
@@ -38,5 +41,10 @@ public class Configuration {
     @Bean
     HttpMessageConverters HttpMessageConverters(){
         return new HttpMessageConverters();
+    }
+    @Bean
+    @Order(-2)
+    public WebExceptionHandler globalExceptionHandler() {
+        return new GlobalErrorsHandler();
     }
 }

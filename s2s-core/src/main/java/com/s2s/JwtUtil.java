@@ -1,6 +1,7 @@
 package com.s2s;
 
 import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -8,20 +9,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class JwtUtil {
 
     public static void verifySystemToken(String token, SecretKey systemKey) {
         try {
             Jws<Claims> claims = extractClaims(token, systemKey);
             if (claims == null) {
-                System.out.println("claims jest null");
+                log.warn("claims jest null");
                 throw new JwtException("Token is not signed by trusted service!");
             }
         } catch (Exception e) {
-            System.out.println("nie jest podpisany przez zaufany system");
+            log.warn("Token nie jest podpisany przez zaufany system");
             throw new JwtException("Token is not signed by trusted service!");
         }
-        System.out.println("klucz jest git");
+        log.info("Token jest ok");
     }
 
     private static Jws<Claims> extractClaims(final String token, final SecretKey key) {
@@ -32,7 +34,7 @@ public class JwtUtil {
     }
 
     public static boolean isTokenExpired(final String token) {
-        System.out.println("token is expired? " + extractClaimsWithoutVerification(token).getExpiration().before(new Date()));
+        log.info("token is expired?");
         return extractClaimsWithoutVerification(token).getExpiration().before(new Date());
     }
 
@@ -44,7 +46,7 @@ public class JwtUtil {
     }
 
     public static String generateToken(final String systemName, final String uniqueUserId, final SecretKey secretKey, final String role) throws IOException {
-        System.out.println("generate new token");
+        log.info("Generate new token");
         Map<String, Object> claims = new HashMap<>();
         claims.put("system", systemName);
         claims.put("sub", uniqueUserId);
@@ -62,9 +64,8 @@ public class JwtUtil {
     }
 
     public static JwtDetails extractJwtDetails(final String token, final SecretKey secretKey) {
-        System.out.println("extract unique user id");
+        log.info("Extract unique user id and role from token");
         Jws<Claims> claimsJws = extractClaims(token, secretKey);
-        System.out.println(claimsJws);
         return new JwtDetails(
                 claimsJws.getBody().getSubject(),
                 claimsJws.getBody().get("role").toString()

@@ -7,6 +7,7 @@ import com.s2s.KeyProvider;
 import com.s2s.S2SVerification;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,12 +22,12 @@ import reactor.core.publisher.Mono;
 import javax.crypto.SecretKey;
 import java.io.IOException;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class CustomGlobalFilter implements WebFilter {
 
     private final UserManagementClient userManagementClient;
-    private static final Logger log = LoggerFactory.getLogger(CustomGlobalFilter.class);
     @Value("${key.path}")
     private String keyPath;
     private String token;
@@ -42,20 +43,17 @@ public class CustomGlobalFilter implements WebFilter {
 
         log.warn("filter started");
         final String authorizationHeader = extractTokenFromRequest(request);
-        if (authorizationHeader.startsWith("Bearer ")) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
             log.warn("token {}", token);
         } else {
-            return Mono.error(new IllegalArgumentException("Token is invalid!"));
+            return Mono.error(new JwtException("Token is invalid!"));
         }
 
         try {
             if (checkTokenCondition() && checkUser()) {
-                log.info("1");
                 JwtDetails jwtDetails = JwtUtil.extractJwtDetails(token, getSecretKeyFromTrustedStore("user-management"));
-                log.info("2");
                 String uniqueUserId = jwtDetails.getUserId();
-                log.info("3");
                 String newToken = JwtUtil.generateToken("gateway", uniqueUserId, getSecretKey(), "SYSTEM");
                 log.warn("Token is valid, new token generated");
                 exchange = replaceUserTokenWithGatewayToken(exchange, newToken, uniqueUserId);

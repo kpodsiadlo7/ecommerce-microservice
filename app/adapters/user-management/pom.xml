@@ -14,13 +14,4 @@
     <properties>
         <java.version>22</java.version>
     </properties>
-
-    <!-- SPRING SECURITY DO WYCIĘCIA BO ZNAJDUJE SIĘ W GŁÓWNYM POM ADAPTERS -->
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-            <version>3.1.10</version>
-        </dependency>
-    </dependencies>
 </project>
