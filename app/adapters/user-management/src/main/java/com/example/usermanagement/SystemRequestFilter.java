@@ -20,7 +20,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class SystemRequestFilter extends OncePerRequestFilter {
 
     @Value("${key.path}")
     private String keyPath;
@@ -28,7 +28,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        logger.info("filter started");
+        logger.info("Weryfikacja systemu");
 
         final String authorizationHeader = request.getHeader("Authorization");
         String jwt = null;

@@ -21,6 +21,7 @@ public class JwtUtil {
             System.out.println("nie jest podpisany przez zaufany system");
             throw new JwtException("Token is not signed by trusted service!");
         }
+        System.out.println("klucz jest git");
     }
 
     private static Jws<Claims> extractClaims(final String token, final SecretKey key) {
@@ -44,12 +45,14 @@ public class JwtUtil {
 
     public static String generateToken(final String systemName, final String uniqueUserId, final SecretKey secretKey, final String role) throws IOException {
         System.out.println("generate new token");
-        // 1 day
         Map<String, Object> claims = new HashMap<>();
         claims.put("system", systemName);
         claims.put("sub", uniqueUserId);
         claims.put("role", role);
+
+        // 1 day
         long expirationTime = 86400000;
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())

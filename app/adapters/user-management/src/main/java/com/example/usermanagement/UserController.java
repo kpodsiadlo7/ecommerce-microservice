@@ -40,6 +40,6 @@ public class UserController {
     @GetMapping("/check-user")
     public boolean checkUser(@RequestParam String token, @RequestHeader("Authorization") String authorization) {
         log.warn("Only system can reach this endpoint.");
-        return true;
+        return userService.checkUserBeforeProcess(token);
     }
 }

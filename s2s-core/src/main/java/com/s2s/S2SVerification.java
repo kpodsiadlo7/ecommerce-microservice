@@ -25,9 +25,9 @@ public class S2SVerification {
 
     public static boolean verifyRequest(String token) {
         SecretKey key = validTokenBeforeVerify(token);
-        System.out.println("klucz jest nul?" +key);
+        System.out.println("klucz jest nul?" + key);
         if (key != null) {
-            System.out.println("klucz jest git");
+            System.out.println("klucz nie jest null");
             JwtUtil.verifySystemToken(token, key);
             return true;
         }
@@ -36,6 +36,7 @@ public class S2SVerification {
 
     private static SecretKey validTokenBeforeVerify(String token) {
         String systemName = getSystemName(token);
+        System.out.println("system name " + systemName);
         SecretKey key = trustedServicesStore.get(systemName);
         if (checkSystemIsRecognized(systemName)) {
             throw new IllegalArgumentException("Unknown service: " + systemName);
@@ -46,7 +47,7 @@ public class S2SVerification {
         return key;
     }
 
-    public static SecretKey getSecretKeyBySystem(String token){
+    public static SecretKey getSecretKeyBySystem(String token) {
         String systemName = getSystemName(token);
         return getSecretSystemKey(systemName);
     }
