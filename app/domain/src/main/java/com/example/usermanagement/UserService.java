@@ -1,7 +1,7 @@
 package com.example.usermanagement;
 
+import com.s2s.S2SVerification;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -49,8 +49,13 @@ class UserService {
     }
 
     public String processLogin(final LoginRequest loginRequest) throws IOException {
-        System.out.println("UserService processLogin login "+loginRequest.login());
+        System.out.println("UserService processLogin login " + loginRequest.login());
 
         return userManagement.processLogin(loginRequest);
+    }
+
+    public boolean checkUserBeforeProcess(String token) {
+        System.out.println("Weryfikacja użytkownika");
+        return S2SVerification.verifyRequest(token);
     }
 }

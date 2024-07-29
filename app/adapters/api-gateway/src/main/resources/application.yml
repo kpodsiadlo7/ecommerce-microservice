@@ -29,3 +29,12 @@ eureka:
 
 key:
   path: app/adapters/api-gateway/key.txt
+
+user-management:
+  url: http://localhost:9040
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
