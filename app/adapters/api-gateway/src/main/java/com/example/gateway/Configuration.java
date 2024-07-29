@@ -6,6 +6,7 @@ import com.s2s.KeyProvider;
 import com.s2s.S2SVerification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 
 @RequiredArgsConstructor
@@ -32,5 +33,10 @@ public class Configuration {
     @Bean
     public CustomGlobalFilter customGlobalFilter() {
         return new CustomGlobalFilter(userManagementClient);
+    }
+
+    @Bean
+    HttpMessageConverters HttpMessageConverters(){
+        return new HttpMessageConverters();
     }
 }

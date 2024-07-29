@@ -51,20 +51,23 @@ public class CustomGlobalFilter implements WebFilter {
 
         try {
             if (checkTokenCondition() && checkUser()) {
+                log.info("1");
                 JwtDetails jwtDetails = JwtUtil.extractJwtDetails(token, getSecretKeyFromTrustedStore("user-management"));
+                log.info("2");
                 String uniqueUserId = jwtDetails.getUserId();
+                log.info("3");
                 String newToken = JwtUtil.generateToken("gateway", uniqueUserId, getSecretKey(), "SYSTEM");
                 log.warn("Token is valid, new token generated");
                 exchange = replaceUserTokenWithGatewayToken(exchange, newToken, uniqueUserId);
             }
         } catch (Exception e) {
-            return Mono.error(new JwtException("Invalid token", e));
+            return Mono.error(new Exception("Error: ", e));
         }
         return chain.filter(exchange);
     }
 
     private boolean checkUser() throws IOException {
-        String systemToken = JwtUtil.generateToken("gateway", null, getSecretKey(), "SYSTEM");
+        String systemToken = JwtUtil.generateToken("gateway", "gateway", getSecretKey(), "SYSTEM");
         return userManagementClient.checkUser(token, "Bearer " + systemToken);
     }
 

@@ -16,7 +16,7 @@ public class S2SVerification {
     }
 
     public static boolean checkSystemIsRecognized(String system) {
-        return !trustedServicesStore.containsKey(system);
+        return trustedServicesStore.containsKey(system);
     }
 
     public static SecretKey getSecretSystemKey(String systemName) {
@@ -38,7 +38,7 @@ public class S2SVerification {
         String systemName = getSystemName(token);
         System.out.println("system name " + systemName);
         SecretKey key = trustedServicesStore.get(systemName);
-        if (checkSystemIsRecognized(systemName)) {
+        if (!checkSystemIsRecognized(systemName)) {
             throw new IllegalArgumentException("Unknown service: " + systemName);
         }
         if (JwtUtil.isTokenExpired(token)) {
