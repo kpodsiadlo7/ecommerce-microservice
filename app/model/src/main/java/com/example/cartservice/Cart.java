@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -15,7 +14,33 @@ import java.util.List;
 @NoArgsConstructor
 class Cart {
     private Long id;
+    private String cartId;
     private String userId;
-    private List<Product> products = new ArrayList<>();
     private BigDecimal totalPrice;
+    private CartStatus status;
+    private List<Product> products;
+
+    public void addItem(Product item) {
+        products.add(item);
+        calculateTotal();
+    }
+
+    public void removeItem(Long productId) {
+        products.removeIf(item -> item.getProductId().equals(productId));
+        calculateTotal();
+    }
+
+    private void calculateTotal() {
+        totalPrice = products.stream()
+                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getAvailableQty())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void updateCartItem(Product productRequest) {
+        products.stream()
+                .filter(e -> e.getProductId().equals(productRequest.getProductId()))
+                .findFirst()
+                .ifPresent(e -> e.setAvailableQty(e.getAvailableQty() + productRequest.getAvailableQty()));
+        calculateTotal();
+    }
 }

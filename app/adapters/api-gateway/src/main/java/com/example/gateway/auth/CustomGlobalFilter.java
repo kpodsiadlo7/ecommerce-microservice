@@ -1,6 +1,6 @@
 package com.example.gateway.auth;
 
-import com.example.apigateway.UserManagementClient;
+import com.example.apigateway.feign.UserManagementClient;
 import com.s2s.JwtDetails;
 import com.s2s.JwtUtil;
 import com.s2s.KeyProvider;
@@ -8,8 +8,6 @@ import com.s2s.S2SVerification;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;

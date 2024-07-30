@@ -8,4 +8,8 @@ interface ProductManagement {
     Product saveProduct(Product productToSave);
 
     Product getProductById(Long productId);
+
+    boolean existsByProductId(Long productId);
+
+    Product checkProductAvailabilityAndReserve(Long productId, Integer quantity);
 }

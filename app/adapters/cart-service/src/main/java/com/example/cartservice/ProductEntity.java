@@ -13,15 +13,12 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartItem {
+public class ProductEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String title;
     private String description;
     private BigDecimal price;
-    private int qty;
-
-    @ManyToMany
-    private List<CartEntity> carts = new ArrayList<>();
+    private Integer availableQty;
+    private Integer reservedQty;
 }

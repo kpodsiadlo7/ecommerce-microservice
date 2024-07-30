@@ -1,4 +1,4 @@
-package com.example.cartservice.auth;
+package com.example.productcatalog.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +22,8 @@ public class WebSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(HttpMethod.POST, "/mycart/**").hasRole("SYSTEM")
+                        //.requestMatchers(HttpMethod.GET, "/product/**").hasRole("SYSTEM")
+                        .requestMatchers("/product/**").permitAll()
                         .anyRequest()
                         .authenticated())
                 .csrf(AbstractHttpConfigurer::disable)

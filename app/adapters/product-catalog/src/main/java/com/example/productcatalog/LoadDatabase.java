@@ -31,7 +31,8 @@ class LoadDatabase {
                             "Title" + i,
                             "Description" + i,
                             generateRandomValue(),
-                            generateRandomValue().intValue()
+                            generateRandomValue().intValue(),
+                            0
                     ));
                 }
                 productRepository.saveAll(productList);

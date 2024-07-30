@@ -15,7 +15,7 @@ public class WebSecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.GET, "/cart/**").permitAll()
+                        .pathMatchers("/cart/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/login", "/register").permitAll()
                         .anyExchange().authenticated()
                 )

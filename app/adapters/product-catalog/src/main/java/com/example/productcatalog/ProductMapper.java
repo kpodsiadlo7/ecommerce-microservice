@@ -2,13 +2,18 @@ package com.example.productcatalog;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ProductMapper {
 
-    List<Product> fromEntityList(List<ProductEntity> productEntityList) {
-        return productEntityList.stream().map(this::fromEntity).toList();
+    List<Product> fromEntityList(List<ProductEntity> productEntities) {
+        List<Product> products = new ArrayList<>();
+        for (var product : productEntities) {
+            products.add(toDomain(product));
+        }
+        return products;
     }
 
     Product fromEntity(ProductEntity productEntity) {
@@ -17,15 +22,19 @@ public class ProductMapper {
                 productEntity.getTitle(),
                 productEntity.getDescription(),
                 productEntity.getPrice(),
-                productEntity.getQty()
+                productEntity.getAvailableQty()
         );
     }
 
     List<ProductRecord> toRecordList(List<Product> products) {
-        return products.stream().map(this::toRecord).toList();
+        List<ProductRecord> records = new ArrayList<>();
+        for (var product : products) {
+            records.add(toRecord(product));
+        }
+        return records;
     }
 
-    ProductRecord toRecord(Product product){
+    ProductRecord toRecord(Product product) {
         return new ProductRecord(
                 product.getId(),
                 product.getTitle(),
@@ -35,19 +44,19 @@ public class ProductMapper {
         );
     }
 
-    Product toDomain(ProductEntity productEntity){
+    Product toDomain(ProductEntity productEntity) {
         return new Product(
                 productEntity.getId(),
                 productEntity.getTitle(),
                 productEntity.getDescription(),
                 productEntity.getPrice(),
-                productEntity.getQty()
+                productEntity.getAvailableQty()
         );
     }
 
-    Product fromRecord(ProductRecord productRecord){
+    Product fromRecord(ProductRecord productRecord) {
         return new Product(
-                productRecord.id(),
+                productRecord.productId(),
                 productRecord.title(),
                 productRecord.description(),
                 productRecord.price(),

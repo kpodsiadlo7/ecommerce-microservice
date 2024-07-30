@@ -29,7 +29,8 @@ class ProductManagementImpl implements ProductManagement {
                 productToSave.getTitle(),
                 productToSave.getDescription(),
                 productToSave.getPrice(),
-                productToSave.getQty()
+                productToSave.getQty(),
+                0
         );
         productRepository.save(productEntity);
         return productMapper.toDomain(productEntity);
@@ -39,5 +40,42 @@ class ProductManagementImpl implements ProductManagement {
     public Product getProductById(Long productId) {
         return productMapper.toDomain(productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found")));
+    }
+
+    @Override
+    public boolean existsByProductId(Long productId) {
+        log.info("Is product exists?");
+        return productRepository.existsById(productId);
+    }
+
+    @Override
+    @Transactional
+    public Product checkProductAvailabilityAndReserve(Long productId, Integer quantity) {
+        log.info("Check product availability and reserve");
+        ProductEntity availableProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found!"));
+        Product product = productMapper
+                .toDomain(availableProduct);
+        if (product.getQty() != null && product.getQty() >= quantity) {
+            log.info("Can reserve");
+            updateProductFromDb(quantity, availableProduct);
+            log.info("Product with id {} successfully reserved", product.getId());
+            return Product.builder()
+                    .id(product.getId())
+                    .price(product.getPrice())
+                    .title(product.getTitle())
+                    .description(product.getDescription())
+                    .qty(quantity)
+                    .price(product.getPrice()).build();
+        }
+        log.info("No enough quantity product to reserve");
+        throw new IllegalArgumentException("No enough quantity product to buy");
+    }
+
+    private void updateProductFromDb(Integer quantity, ProductEntity productEntity) {
+        log.warn("Update available and reserved quantity for product with id {}", productEntity.getId());
+        productEntity.updateAvailableQty(quantity);
+        productEntity.updateReservedQty(quantity);
+        productRepository.save(productEntity);
     }
 }

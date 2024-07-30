@@ -15,6 +15,6 @@ public record ProductCreateRequest(@NotEmpty(message = "Product title cannot be 
                                    BigDecimal price,
 
                                    @NotNull(message = "Product quantity cannot be empty")
-                                   @Min(value = 1, message = "Must be a positive integer")
+                                   @Min(value = 0, message = "Must be 0 or a positive integer")
                                    Integer qty) {
 }

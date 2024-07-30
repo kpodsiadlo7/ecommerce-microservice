@@ -14,12 +14,23 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-class ProductEntity {
+class ProductEntity implements ProductUpdater {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String title;
     private String description;
     private BigDecimal price;
-    private int qty;
+    private Integer availableQty;
+    private Integer reservedQty;
+
+    @Override
+    public void updateAvailableQty(Integer availableQty) {
+        this.availableQty -= availableQty;
+    }
+
+    @Override
+    public void updateReservedQty(Integer reservedQty) {
+        this.reservedQty += reservedQty;
+    }
 }

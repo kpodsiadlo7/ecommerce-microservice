@@ -1,6 +1,6 @@
 package com.example.gateway;
 
-import com.example.apigateway.UserManagementClient;
+import com.example.apigateway.feign.UserManagementClient;
 import com.example.gateway.auth.CustomGlobalFilter;
 import com.example.gateway.exception.GlobalErrorsHandler;
 import com.s2s.KeyProvider;

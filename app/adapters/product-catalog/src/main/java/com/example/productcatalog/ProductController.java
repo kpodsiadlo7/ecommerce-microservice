@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Validated
 @RestController
@@ -27,6 +28,12 @@ public class ProductController {
     @GetMapping("/{productId}")
     ResponseEntity<ProductRecord> getProductById(@PathVariable @NotNull Long productId) {
         return ResponseEntity.ok(productMapper.toRecord(productService.getProductById(productId)));
+    }
+
+    @GetMapping("/availability")
+    ResponseEntity<ProductRecord> checkProductAvailability(@RequestParam Long productId,
+                                                           @RequestParam Integer quantity) {
+        return ResponseEntity.ok(productMapper.toRecord(productService.checkProductAvailability(productId, quantity)));
     }
 
     @PostMapping
