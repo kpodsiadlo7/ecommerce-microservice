@@ -12,4 +12,6 @@ interface ProductManagement {
     boolean existsByProductId(Long productId);
 
     Product checkProductAvailabilityAndReserve(Long productId, Integer quantity);
+
+    void unReserveProducts(List<Product> products);
 }

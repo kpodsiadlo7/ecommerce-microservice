@@ -72,10 +72,20 @@ class ProductManagementImpl implements ProductManagement {
         throw new IllegalArgumentException("No enough quantity product to buy");
     }
 
+    @Override
+    @Transactional
+    public void unReserveProducts(List<Product> products) {
+        products.forEach(product -> {
+            ProductEntity entity = productRepository.findById(product.getId())
+                    .orElseThrow(() -> new IllegalArgumentException(String.format("Product %d not found!", product.getId())));
+            entity.unReserveQty(product.getQty());
+            productRepository.save(entity);
+        });
+    }
+
     private void updateProductFromDb(Integer quantity, ProductEntity productEntity) {
         log.warn("Update available and reserved quantity for product with id {}", productEntity.getId());
-        productEntity.updateAvailableQty(quantity);
-        productEntity.updateReservedQty(quantity);
+        productEntity.reserveQty(quantity);
         productRepository.save(productEntity);
     }
 }

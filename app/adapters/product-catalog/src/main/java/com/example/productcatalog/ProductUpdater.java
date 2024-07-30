@@ -1,7 +1,8 @@
 package com.example.productcatalog;
 
-public interface ProductUpdater {
-    void updateAvailableQty(Integer availableQty);
+interface ProductUpdater {
 
-    void updateReservedQty(Integer reservedQty);
+    void unReserveQty(Integer qty);
+
+    void reserveQty(Integer qty);
 }

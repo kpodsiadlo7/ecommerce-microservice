@@ -25,12 +25,14 @@ class ProductEntity implements ProductUpdater {
     private Integer reservedQty;
 
     @Override
-    public void updateAvailableQty(Integer availableQty) {
-        this.availableQty -= availableQty;
+    public void unReserveQty(Integer qty) {
+        this.reservedQty -= qty;
+        this.availableQty += qty;
     }
 
     @Override
-    public void updateReservedQty(Integer reservedQty) {
-        this.reservedQty += reservedQty;
+    public void reserveQty(Integer qty) {
+        this.availableQty -= qty;
+        this.reservedQty += qty;
     }
 }

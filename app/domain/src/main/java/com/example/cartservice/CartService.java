@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -17,7 +19,7 @@ class CartService {
     private final CartManagement cartManagement;
 
     public Cart addProductToCart(final Long productId, final String userId, Integer quantity) throws IOException {
-        Cart cart = ensureUserHasCartAndCreate(userId, CartStatus.ACKNOWLEDGED);
+        Cart cart = ensureUserHasCartAndCreate(userId);
         if (quantity == null) quantity = 1;
         preliminarilyAddProductsToCart(productId, userId, quantity, cart);
         Product product = checkProductAndReserve(productId, userId, quantity);
@@ -38,8 +40,8 @@ class CartService {
         return "Bearer " + JwtUtil.generateToken(systemName, userId, S2SVerification.getSecretSystemKey(systemName), "SYSTEM");
     }
 
-    private Cart ensureUserHasCartAndCreate(String userId, CartStatus status) {
-        if (!cartManagement.userHasCart(userId, status)) {
+    private Cart ensureUserHasCartAndCreate(String userId) {
+        if (!cartManagement.userHasCart(userId, CartStatus.ACKNOWLEDGED)) {
             Cart cart = Cart.builder()
                     .cartId(generateCartId())
                     .userId(userId)
@@ -58,7 +60,7 @@ class CartService {
     }
 
     public Cart getMyCart(final String userId) {
-        return ensureUserHasCartAndCreate(userId, CartStatus.ACKNOWLEDGED);
+        return ensureUserHasCartAndCreate(userId);
     }
 
     private String generateCartId() {
@@ -69,20 +71,27 @@ class CartService {
         return cartId;
     }
 
-    public Cart clearMyCart(String userId) {
+    public Cart clearMyCart(String userId) throws IOException, TimeoutException {
         Cart cart = getMyCart(userId);
         if (cart.getProducts().isEmpty()) {
             log.info("Cart was empty");
             return cart;
         }
         log.warn("Cart was not empty - clear cart");
-        return ClearProductsFromCartAndUpdate(cart);
+        return clearProductsFromCartAndUpdate(cart);
     }
 
-    private Cart ClearProductsFromCartAndUpdate(Cart cart) {
+    private Cart clearProductsFromCartAndUpdate(Cart cart) throws IOException, TimeoutException {
         log.info("Cart before clear products {}", cart);
+        List<EventProduct> productsToUnReserve = deepCopyProducts(cart);
         cart.clearCart();
-        log.warn("Cart after products cleared {} ", cart);
-        return cartManagement.updateCart(cart);
+        return cartManagement.updateCart(cart, productsToUnReserve);
+    }
+
+    private List<EventProduct> deepCopyProducts(Cart cart) {
+        return cart.getProducts().stream()
+                .map(product -> EventProduct.builder()
+                        .productId(product.getProductId())
+                        .qty(product.getAvailableQty()).build()).toList();
     }
 }

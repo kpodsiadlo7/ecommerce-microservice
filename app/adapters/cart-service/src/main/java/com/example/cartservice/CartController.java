@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 @Validated
 @RestController
@@ -17,7 +18,7 @@ public class CartController {
     private final CartService productService;
     private final CartMapper cartMapper;
 
-    @PostMapping("/add-product/{cartId}")
+    @PostMapping("/add-product")
     ResponseEntity<CartRecord> addProductToCart(@RequestParam Long productId,
                                                 @RequestHeader("PublicUserId") String userId,
                                                 @RequestParam(required = false) Integer quantity) throws IOException {
@@ -26,7 +27,7 @@ public class CartController {
     }
 
     @DeleteMapping("/clear")
-    ResponseEntity<CartRecord> clearMyCart(@RequestHeader("PublicUserId") String userId) {
+    ResponseEntity<CartRecord> clearMyCart(@RequestHeader("PublicUserId") String userId) throws IOException, TimeoutException {
         var response = cartMapper.toRecord(productService.clearMyCart(userId));
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }

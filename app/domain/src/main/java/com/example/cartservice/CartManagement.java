@@ -1,5 +1,9 @@
 package com.example.cartservice;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeoutException;
+
 interface CartManagement {
     boolean userHasCart(String userId, CartStatus status);
 
@@ -17,5 +21,5 @@ interface CartManagement {
 
     void changeCartStatusToFailed(Cart cart, CartStatus cartStatus);
 
-    Cart updateCart(Cart cart);
+    Cart updateCart(Cart cart, List<EventProduct> products) throws IOException, TimeoutException;
 }
