@@ -15,6 +15,7 @@ public class Configuration {
     private static final String API_GATEWAY_KEY_PATH = "app/adapters/api-gateway/key.txt";
     private static final String CART_SERVICE_KEY_PATH = "app/adapters/cart-service/key.txt";
     private final CartRepository cartRepository;
+    private final EventListener eventListener;
 
     @Bean
     CommandLineRunner addSystemToTrustedStore() {
@@ -22,6 +23,7 @@ public class Configuration {
             S2SVerification.addToTrustedStore("gateway", KeyProvider.provideKey(API_GATEWAY_KEY_PATH));
             S2SVerification.addToTrustedStore("cart-service", KeyProvider.provideKey(CART_SERVICE_KEY_PATH));
             log.info("Rekordów w db {}", cartRepository.count());
+            eventListener.listenerOnEvents();
         };
     }
 

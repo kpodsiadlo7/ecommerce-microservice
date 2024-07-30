@@ -19,7 +19,7 @@ interface CartManagement {
 
     Cart updateCart(Product productRequest, Cart cart, CartStatus status);
 
-    void changeCartStatusToFailed(Cart cart, CartStatus cartStatus);
+    void updateEventStatus(Long eventId, String eventStatus);
 
     Cart updateCart(Cart cart, List<EventProduct> products) throws IOException, TimeoutException;
 }

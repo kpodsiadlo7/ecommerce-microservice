@@ -5,13 +5,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class EventProductMapper {
+public class EventMapper {
 
     List<EventProductEntity> toEntityList(List<EventProduct> productsToUnReserve) {
         return productsToUnReserve.stream().map(this::toEntity).toList();
     }
 
-    EventProductEntity toEntity(EventProduct eventProduct){
+    EventProductEntity toEntity(EventProduct eventProduct) {
         return new EventProductEntity(
                 null, // ID encji jest generowane przez bazę danych
                 eventProduct.getProductId(),
@@ -23,7 +23,7 @@ public class EventProductMapper {
         return eventProducts.stream().map(this::toRecord).toList();
     }
 
-    EventProductRecord toRecord(EventProduct eventProduct){
+    EventProductRecord toRecord(EventProduct eventProduct) {
         return new EventProductRecord(
                 eventProduct.getProductId(),
                 eventProduct.getQty()

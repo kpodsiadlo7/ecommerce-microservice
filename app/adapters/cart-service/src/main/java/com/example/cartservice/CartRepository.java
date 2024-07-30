@@ -8,4 +8,6 @@ interface CartRepository extends JpaRepository<CartEntity,Long> {
     boolean existsByCartId(String cartId);
 
     CartEntity findByUserId(String userId);
+
+    CartEntity findByCartId(String cartId);
 }

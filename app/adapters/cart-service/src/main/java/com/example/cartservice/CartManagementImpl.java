@@ -1,6 +1,7 @@
 package com.example.cartservice;
 
 import com.example.cartservice.feign.ProductClient;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,11 +16,12 @@ import java.util.concurrent.TimeoutException;
 @RequiredArgsConstructor
 class CartManagementImpl implements CartManagement {
 
-    private final EventProductMapper eventProductMapper;
     private final EventRepository eventRepository;
     private final CartRepository cartRepository;
     private final ProductClient productClient;
     private final ProductMapper productMapper;
+    private final EventSender eventSender;
+    private final EventMapper eventMapper;
     private final CartMapper cartMapper;
 
     @Override
@@ -70,27 +72,30 @@ class CartManagementImpl implements CartManagement {
     }
 
     @Override
-    public void changeCartStatusToFailed(Cart cart, CartStatus cartStatus) {
-        log.info("Status przed aktualizacją {} \n koszyk wygląda następująco {}", cart.getStatus(), cart);
-        cart.setStatus(cartStatus);
-        cartRepository.save(cartMapper.toEntity(cart));
+    public void updateEventStatus(Long eventId, String eventStatus) {
+        EventEntity eventEntity = eventRepository.findByIdAndEventStatus(eventId, EventStatus.PENDING)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with %d id - not found!", eventId)));
+        eventEntity.updateStatus(EventStatus.valueOf(eventStatus));
+        eventRepository.save(eventEntity);
+        log.info("Event after update status {}", eventEntity);
     }
 
     @Override
     @Transactional
     public Cart updateCart(Cart cart, List<EventProduct> productsToUnReserve) throws IOException, TimeoutException {
         Cart clearCart = cartMapper.toDomain(cartRepository.save(cartMapper.toEntity(cart)));
-        eventUnReserveProducts(productsToUnReserve);
+        eventUnReserveProducts(cart.getCartId(), productsToUnReserve);
         return clearCart;
     }
 
-    private void eventUnReserveProducts(List<EventProduct> productsToUnReserve) throws IOException, TimeoutException {
-        Event event = new Event(
+    private void eventUnReserveProducts(String cartId, List<EventProduct> productsToUnReserve) throws IOException, TimeoutException {
+        EventEntity eventEntity = new EventEntity(
                 null, // ID encji jest generowane przez bazę danych
+                cartId,
                 EventStatus.PENDING,
-                eventProductMapper.toEntityList(productsToUnReserve)
+                eventMapper.toEntityList(productsToUnReserve)
         );
-        eventRepository.save(event);
-        event.unReserveProducts(eventProductMapper.toRecordList(productsToUnReserve));
+        Long eventId = eventRepository.save(eventEntity).getId();
+        eventSender.unReserveProducts(eventId, eventMapper.toRecordList(productsToUnReserve));
     }
 }
