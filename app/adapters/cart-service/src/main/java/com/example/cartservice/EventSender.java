@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class EventSender {
+class EventSender {
     private final static String UPDATE_PRODUCT = "product_update";
 
     void unReserveProducts(Long cartId, List<EventProductRecord> productsToUnReserve) throws IOException, TimeoutException {

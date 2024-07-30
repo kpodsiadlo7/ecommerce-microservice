@@ -28,7 +28,7 @@ public class Configuration {
     }
 
     @Bean
-    CartService cartService(CartManagement cartManagement){
+    CartService cartService(CartManagement cartManagement) {
         return new CartService(cartManagement);
     }
 }

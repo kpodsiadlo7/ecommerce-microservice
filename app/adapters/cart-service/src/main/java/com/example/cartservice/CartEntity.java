@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartEntity {
+class CartEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

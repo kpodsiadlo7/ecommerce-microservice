@@ -14,7 +14,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventProductEntity {
+class EventProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

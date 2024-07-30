@@ -1,23 +1,22 @@
 package com.example.cartservice;
 
-import com.example.productcatalog.ProductRecord;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ProductMapper {
+class ProductMapper {
 
     List<ProductRecord> toRecordList(List<Product> products) {
         List<ProductRecord> records = new ArrayList<>();
-        for (var product : products){
+        for (var product : products) {
             records.add(toRecord(product));
         }
         return records;
     }
 
-    ProductRecord toRecord(Product product) {
+    private ProductRecord toRecord(Product product) {
         return new ProductRecord(
                 product.getProductId(),
                 product.getTitle(),
@@ -45,7 +44,7 @@ public class ProductMapper {
         return entities;
     }
 
-    ProductEntity toEntity(Product product) {
+    private ProductEntity toEntity(Product product) {
         return new ProductEntity(
                 product.getProductId(),
                 product.getTitle(),
@@ -58,7 +57,7 @@ public class ProductMapper {
 
     List<Product> toDomainList(List<ProductEntity> productEntities) {
         List<Product> products = new ArrayList<>();
-        for (var product: productEntities){
+        for (var product : productEntities) {
             products.add(fromEntity(product));
         }
         return products;

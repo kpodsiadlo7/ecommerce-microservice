@@ -1,5 +1,5 @@
 package com.example.cartservice;
 
-public interface EventUpdater {
-    void updateStatus(EventStatus status);
+interface EventUpdater {
+    void updateStatus(EventEntity.EventStatus status);
 }

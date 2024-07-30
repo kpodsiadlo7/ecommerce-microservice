@@ -1,6 +1,5 @@
 package com.example.cartservice;
 
-import com.example.cartservice.feign.ProductClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -73,9 +72,9 @@ class CartManagementImpl implements CartManagement {
 
     @Override
     public void updateEventStatus(Long eventId, String eventStatus) {
-        EventEntity eventEntity = eventRepository.findByIdAndEventStatus(eventId, EventStatus.PENDING)
+        EventEntity eventEntity = eventRepository.findByIdAndEventStatus(eventId, EventEntity.EventStatus.PENDING)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Event with %d id - not found!", eventId)));
-        eventEntity.updateStatus(EventStatus.valueOf(eventStatus));
+        eventEntity.updateStatus(EventEntity.EventStatus.valueOf(eventStatus));
         eventRepository.save(eventEntity);
         log.info("Event after update status {}", eventEntity);
     }
@@ -92,7 +91,7 @@ class CartManagementImpl implements CartManagement {
         EventEntity eventEntity = new EventEntity(
                 null, // ID encji jest generowane przez bazę danych
                 cartId,
-                EventStatus.PENDING,
+                EventEntity.EventStatus.PENDING,
                 eventMapper.toEntityList(productsToUnReserve)
         );
         Long eventId = eventRepository.save(eventEntity).getId();

@@ -18,7 +18,7 @@ import java.util.concurrent.TimeoutException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class EventListener {
+class EventListener {
     private final static String UPDATE_STATUS = "product_status";
 
     private final EventService eventService;

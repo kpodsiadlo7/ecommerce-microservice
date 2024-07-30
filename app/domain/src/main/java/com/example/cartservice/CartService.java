@@ -18,7 +18,7 @@ class CartService {
 
     private final CartManagement cartManagement;
 
-    public Cart addProductToCart(final Long productId, final String userId, Integer quantity) throws IOException {
+    Cart addProductToCart(final Long productId, final String userId, Integer quantity) throws IOException {
         Cart cart = ensureUserHasCartAndCreate(userId);
         if (quantity == null) quantity = 1;
         preliminarilyAddProductsToCart(productId, userId, quantity, cart);
@@ -59,7 +59,7 @@ class CartService {
         cart.setUserId(userId);
     }
 
-    public Cart getMyCart(final String userId) {
+    Cart getMyCart(final String userId) {
         return ensureUserHasCartAndCreate(userId);
     }
 
@@ -71,7 +71,7 @@ class CartService {
         return cartId;
     }
 
-    public Cart clearMyCart(String userId) throws IOException, TimeoutException {
+    Cart clearMyCart(String userId) throws IOException, TimeoutException {
         Cart cart = getMyCart(userId);
         if (cart.getProducts().isEmpty()) {
             log.info("Cart was empty");

@@ -18,7 +18,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventEntity implements EventUpdater {
+class EventEntity implements EventUpdater {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -31,4 +31,11 @@ public class EventEntity implements EventUpdater {
     public void updateStatus(EventStatus status) {
         this.eventStatus = status;
     }
+
+    enum EventStatus {
+        PENDING,
+        COMPLETED,
+        FAILED
+    }
 }
+

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 @RestController
 @RequestMapping("/mycart")
 @RequiredArgsConstructor
-public class CartController {
+class CartController {
 
     private final CartService productService;
     private final CartMapper cartMapper;

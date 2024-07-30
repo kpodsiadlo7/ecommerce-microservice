@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-class Product {
+public class Product {
     private Long productId;
     private String title;
     private String description;

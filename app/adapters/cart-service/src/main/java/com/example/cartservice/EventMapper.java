@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class EventMapper {
+class EventMapper {
 
     List<EventProductEntity> toEntityList(List<EventProduct> productsToUnReserve) {
         return productsToUnReserve.stream().map(this::toEntity).toList();
