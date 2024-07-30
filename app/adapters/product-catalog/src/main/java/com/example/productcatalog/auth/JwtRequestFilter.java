@@ -1,4 +1,4 @@
-package com.example.cartservice.auth;
+package com.example.productcatalog.auth;
 
 import com.s2s.JwtDetails;
 import com.s2s.JwtUtil;

@@ -1,4 +1,4 @@
-package com.example.apigateway;
+package com.example.apigateway.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

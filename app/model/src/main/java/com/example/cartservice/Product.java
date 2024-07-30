@@ -11,10 +11,15 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-class Product {
-    private Long id;
+public class Product {
+    private Long productId;
     private String title;
     private String description;
     private BigDecimal price;
-    private Integer qty;
+    private Integer availableQty;
+    private Integer reservedQty;
+
+    public void updateItem(Product productRequest) {
+        this.availableQty += productRequest.getAvailableQty();
+    }
 }

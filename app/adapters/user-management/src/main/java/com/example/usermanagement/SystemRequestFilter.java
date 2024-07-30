@@ -3,6 +3,7 @@ package com.example.usermanagement;
 import com.s2s.JwtDetails;
 import com.s2s.JwtUtil;
 import com.s2s.S2SVerification;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,12 +42,12 @@ public class SystemRequestFilter extends OncePerRequestFilter {
             jwt = authorizationHeader.substring(7);
             S2SVerification.verifyRequest(jwt);
             jwtDetails = JwtUtil.extractJwtDetails(jwt, S2SVerification.getSecretKeyBySystem(jwt));
-            log.info("jwtDetails: " + jwtDetails);
+            log.info("jwtDetails: {}", jwtDetails);
         }
 
         if (jwtDetails != null && jwtDetails.getRole() != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             String role = jwtDetails.getRole();
-            log.info("Role: " + role);
+            log.info("Role: {}", role);
             Authentication authentication = new UsernamePasswordAuthenticationToken(jwt, null,
                     AuthorityUtils.createAuthorityList("ROLE_" + role));
             SecurityContextHolder.getContext().setAuthentication(authentication);
