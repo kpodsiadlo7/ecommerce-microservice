@@ -18,11 +18,17 @@ public class CartController {
     private final CartMapper cartMapper;
 
     @PostMapping("/add-product/{cartId}")
-    ResponseEntity<?> addProductToCart(@RequestParam Long productId,
-                                       @RequestHeader("PublicUserId") String userId,
-                                       @RequestParam(required = false) Integer quantity) throws IOException {
+    ResponseEntity<CartRecord> addProductToCart(@RequestParam Long productId,
+                                                @RequestHeader("PublicUserId") String userId,
+                                                @RequestParam(required = false) Integer quantity) throws IOException {
         var response = cartMapper.toRecord(productService.addProductToCart(productId, userId, quantity));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @DeleteMapping("/clear")
+    ResponseEntity<CartRecord> clearMyCart(@RequestHeader("PublicUserId") String userId) {
+        var response = cartMapper.toRecord(productService.clearMyCart(userId));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
     @GetMapping

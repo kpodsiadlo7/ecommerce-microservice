@@ -20,12 +20,12 @@ class Cart {
     private CartStatus status;
     private List<Product> products;
 
-    public void addItem(Product item) {
+    void addItem(Product item) {
         products.add(item);
         calculateTotal();
     }
 
-    public void removeItem(Long productId) {
+    void removeItem(Long productId) {
         products.removeIf(item -> item.getProductId().equals(productId));
         calculateTotal();
     }
@@ -36,11 +36,16 @@ class Cart {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    public void updateCartItem(Product productRequest) {
+    void updateCartItem(Product productRequest) {
         products.stream()
                 .filter(e -> e.getProductId().equals(productRequest.getProductId()))
                 .findFirst()
                 .ifPresent(e -> e.setAvailableQty(e.getAvailableQty() + productRequest.getAvailableQty()));
+        calculateTotal();
+    }
+
+    void clearCart(){
+        this.products.clear();
         calculateTotal();
     }
 }

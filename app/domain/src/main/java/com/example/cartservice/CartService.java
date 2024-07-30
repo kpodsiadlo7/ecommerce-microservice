@@ -3,12 +3,14 @@ package com.example.cartservice;
 import com.s2s.JwtUtil;
 import com.s2s.S2SVerification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
 
+@Slf4j
 @RequiredArgsConstructor
 class CartService {
 
@@ -18,14 +20,17 @@ class CartService {
         Cart cart = ensureUserHasCartAndCreate(userId, CartStatus.ACKNOWLEDGED);
         if (quantity == null) quantity = 1;
         preliminarilyAddProductsToCart(productId, userId, quantity, cart);
-        String systemToken = generateToken(userId);
-        Product product = cartManagement.checkProductAndReserve(productId, quantity, systemToken);
+        Product product = checkProductAndReserve(productId, userId, quantity);
 
         if (product != null && product.getAvailableQty() != null && product.getPrice() != null) {
             return cartManagement.updateCart(product, cart, CartStatus.ACKNOWLEDGED);
         }
-        cartManagement.changeCartStatusToFailed(cart, CartStatus.FAILED);
-        return cart;
+        return cartManagement.saveCart(cart);
+    }
+
+    private Product checkProductAndReserve(Long productId, String userId, Integer quantity) throws IOException {
+        String systemToken = generateToken(userId);
+        return cartManagement.checkProductAndReserve(productId, quantity, systemToken);
     }
 
     private static String generateToken(String userId) throws IOException {
@@ -50,8 +55,6 @@ class CartService {
     private void preliminarilyAddProductsToCart(Long productId, String userId, Integer quantity, Cart cart) {
         cart.getProducts().add(Product.builder().productId(productId).availableQty(quantity).build());
         cart.setUserId(userId);
-        cart.setStatus(CartStatus.PROCESS);
-        //cartManagement.saveProcessCart(cart);
     }
 
     public Cart getMyCart(final String userId) {
@@ -64,5 +67,22 @@ class CartService {
             generateCartId();
         }
         return cartId;
+    }
+
+    public Cart clearMyCart(String userId) {
+        Cart cart = getMyCart(userId);
+        if (cart.getProducts().isEmpty()) {
+            log.info("Cart was empty");
+            return cart;
+        }
+        log.warn("Cart was not empty - clear cart");
+        return ClearProductsFromCartAndUpdate(cart);
+    }
+
+    private Cart ClearProductsFromCartAndUpdate(Cart cart) {
+        log.info("Cart before clear products {}", cart);
+        cart.clearCart();
+        log.warn("Cart after products cleared {} ", cart);
+        return cartManagement.updateCart(cart);
     }
 }

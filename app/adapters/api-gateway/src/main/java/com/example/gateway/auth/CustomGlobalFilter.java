@@ -53,7 +53,10 @@ public class CustomGlobalFilter implements WebFilter {
                 JwtDetails jwtDetails = JwtUtil.extractJwtDetails(token, getSecretKeyFromTrustedStore("user-management"));
                 String uniqueUserId = jwtDetails.getUserId();
                 String newToken = JwtUtil.generateToken("gateway", uniqueUserId, getSecretKey(), "SYSTEM");
-                log.warn("Token is valid, new token generated");
+                //todo
+                log.info("api-gateway token {}", newToken);
+
+                log.info("Token is valid, new token generated");
                 exchange = replaceUserTokenWithGatewayToken(exchange, newToken, uniqueUserId);
             }
         } catch (Exception e) {

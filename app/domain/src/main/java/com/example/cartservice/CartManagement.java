@@ -11,9 +11,11 @@ interface CartManagement {
 
     Product checkProductAndReserve(Long productId, Integer quantity, String authorization);
 
-    void saveProcessCart(Cart cart);
+    Cart saveCart(Cart cart);
 
     Cart updateCart(Product productRequest, Cart cart, CartStatus status);
 
     void changeCartStatusToFailed(Cart cart, CartStatus cartStatus);
+
+    Cart updateCart(Cart cart);
 }

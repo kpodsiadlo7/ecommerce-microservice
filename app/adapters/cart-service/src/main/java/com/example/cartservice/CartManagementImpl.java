@@ -43,8 +43,8 @@ class CartManagementImpl implements CartManagement {
 
     @Override
     @Transactional
-    public void saveProcessCart(Cart cart) {
-        cartRepository.save(cartMapper.toEntity(cart));
+    public Cart saveCart(Cart cart) {
+        return cartMapper.toDomain(cartRepository.save(cartMapper.toEntity(cart)));
     }
 
     @Override
@@ -58,7 +58,6 @@ class CartManagementImpl implements CartManagement {
         if (productToUpdate == null) {
             cartToUpdate.addItem(productRequest);
         } else {
-            //productToUpdate.updateItem(productRequest);
             cartToUpdate.updateCartItem(productRequest);
         }
         return cartMapper.toDomain(cartRepository.save(cartMapper.toEntity(cartToUpdate)));
@@ -69,5 +68,14 @@ class CartManagementImpl implements CartManagement {
         log.info("Statuts przed aktualizacją {} \n koszyk wygląda następująco {}", cart.getStatus(), cart);
         cart.setStatus(cartStatus);
         cartRepository.save(cartMapper.toEntity(cart));
+    }
+
+    @Override
+    public Cart updateCart(Cart cart) {
+        Cart cartAfterClear = cartMapper.toDomain(cartRepository.save(cartMapper.toEntity(cart)));
+        if (cartAfterClear.getProducts().isEmpty()) {
+            //todo Aktualizacja stanu produktów za pomocą rabbitMQ
+        }
+        return cartAfterClear;
     }
 }
