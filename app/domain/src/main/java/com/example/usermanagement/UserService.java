@@ -50,7 +50,6 @@ class UserService {
 
     public String processLogin(final LoginRequest loginRequest) throws IOException {
         System.out.println("UserService processLogin login " + loginRequest.login());
-
         return userManagement.processLogin(loginRequest);
     }
 

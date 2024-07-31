@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 class CartMapper {
-
     private final ProductMapper productMapper;
 
     CartEntity toEntity(Cart cart) {

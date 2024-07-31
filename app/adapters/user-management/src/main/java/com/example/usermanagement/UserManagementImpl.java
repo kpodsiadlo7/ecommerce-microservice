@@ -1,10 +1,8 @@
 package com.example.usermanagement;
 
 import com.s2s.JwtUtil;
-import com.s2s.KeyProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,8 +24,6 @@ class UserManagementImpl implements UserManagement {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final UserMapper userMapper;
-    @Value("${key.path}")
-    private String keyPath;
 
     @Override
     @Transactional
@@ -46,7 +42,7 @@ class UserManagementImpl implements UserManagement {
             UserDetails userDetails = userDetailsService.loadUserByUsername(login);
             String uniqueUserId = userRepository.findByUsername(userDetails.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + userDetails.getUsername())).getUniqueUserId();
-            return JwtUtil.generateToken("user-management", uniqueUserId, KeyProvider.provideKey(keyPath), "USER");
+            return JwtUtil.generateToken("user-management", uniqueUserId, "USER");
         } else {
             throw new AuthenticationException("Authentication failed");
         }

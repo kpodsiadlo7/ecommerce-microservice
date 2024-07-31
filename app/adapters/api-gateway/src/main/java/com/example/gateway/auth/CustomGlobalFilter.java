@@ -3,12 +3,10 @@ package com.example.gateway.auth;
 import com.example.apigateway.feign.UserManagementClient;
 import com.s2s.JwtDetails;
 import com.s2s.JwtUtil;
-import com.s2s.KeyProvider;
 import com.s2s.S2SVerification;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -26,8 +24,6 @@ import java.io.IOException;
 public class CustomGlobalFilter implements WebFilter {
 
     private final UserManagementClient userManagementClient;
-    @Value("${key.path}")
-    private String keyPath;
     private String token;
 
     @Override
@@ -52,8 +48,7 @@ public class CustomGlobalFilter implements WebFilter {
             if (checkTokenCondition() && checkUser()) {
                 JwtDetails jwtDetails = JwtUtil.extractJwtDetails(token, getSecretKeyFromTrustedStore("user-management"));
                 String uniqueUserId = jwtDetails.getUserId();
-                String newToken = JwtUtil.generateToken("gateway", uniqueUserId, getSecretKey(), "SYSTEM");
-                //todo
+                String newToken = JwtUtil.generateToken("gateway", uniqueUserId, "SYSTEM");
                 log.info("api-gateway token {}", newToken);
 
                 log.info("Token is valid, new token generated");
@@ -66,8 +61,8 @@ public class CustomGlobalFilter implements WebFilter {
     }
 
     private boolean checkUser() throws IOException {
-        String systemToken = JwtUtil.generateToken("gateway", "gateway", getSecretKey(), "SYSTEM");
-        return userManagementClient.checkUser(token, "Bearer " + systemToken);
+        String systemToken = "Bearer " + JwtUtil.generateToken("gateway", "gateway", "SYSTEM");
+        return userManagementClient.checkUser(token, systemToken);
     }
 
     private SecretKey getSecretKeyFromTrustedStore(String systemName) throws IllegalAccessException {
@@ -86,15 +81,10 @@ public class CustomGlobalFilter implements WebFilter {
         return request.getHeaders().getFirst("Authorization");
     }
 
-    private SecretKey getSecretKey() throws IOException {
-        return KeyProvider.provideKey(keyPath);
-    }
-
     private ServerWebExchange replaceUserTokenWithGatewayToken(ServerWebExchange exchange, String newToken, String uniqueUserId) {
         log.info("replace user token with gateway token");
         ServerHttpRequest request = exchange.getRequest().mutate()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + newToken)
-                .header("PublicUserId", uniqueUserId)
                 .build();
 
         return exchange.mutate().request(request).build();

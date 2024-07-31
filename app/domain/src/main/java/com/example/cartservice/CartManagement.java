@@ -9,7 +9,7 @@ interface CartManagement {
 
     Cart createCartForUser(Cart cart);
 
-    Cart getUserCart(String userId);
+    Cart getUserCart(String userId, CartStatus status);
 
     boolean isCartIdAlreadyExists(String cartId);
 
@@ -17,9 +17,13 @@ interface CartManagement {
 
     Cart saveCart(Cart cart);
 
-    Cart updateCart(Product productRequest, Cart cart, CartStatus status);
+    Cart updateCart(Product productRequest, Cart cart);
 
-    void updateEventStatus(Long eventId, String eventStatus);
+    void updateEventStatus(String eventId, String eventStatus);
 
     Cart updateCart(Cart cart, List<EventProduct> products) throws IOException, TimeoutException;
+
+    String provideUserId();
+
+    Cart isCartForOrder(String userId);
 }

@@ -1,7 +1,7 @@
 package com.example.cartservice;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.GsonBuilder;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
@@ -20,6 +19,7 @@ import java.util.concurrent.TimeoutException;
 @RequiredArgsConstructor
 class EventListener {
     private final static String UPDATE_STATUS = "product_status";
+    private final static String CART_STATUS = "cart_status";
 
     private final EventService eventService;
 
@@ -33,6 +33,7 @@ class EventListener {
         Channel channel = connection.createChannel();
 
         channel.queueDeclare(UPDATE_STATUS, true, false, false, null);
+        channel.queueDeclare(CART_STATUS, true, false, false, null);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
@@ -42,19 +43,20 @@ class EventListener {
         };
         channel.basicConsume(UPDATE_STATUS, true, deliverCallback, consumerTag -> {
         });
+        channel.basicConsume(CART_STATUS, true, deliverCallback, consumerTag -> {
+        });
     }
 
     private void processResponse(String message) {
+        Gson gson = new GsonBuilder().create();
+        EventReceiverRecord event = null;
         try {
-            Gson gson = new Gson();
-            Type fileType = new TypeToken<EventReceiverRecord>() {
-            }.getType();
-            EventReceiverRecord event = gson.fromJson(message, fileType);
-
-            eventService.updateCartStatus(event);
-        } catch (
-                Exception e) {
-            log.error("Failed to parse JSON: {}", e.getMessage(), e);
+            event = gson.fromJson(message, EventReceiverRecord.class);
+            log.info("Successfully parsed event: {}", event);
+        } catch (Exception e) {
+            log.error("Failed to parse JSON: {}", message, e);
         }
+        //todo aktualizacja statusu dopiero po zakończonej płatności na completed lub failed
+        //eventService.updateCartStatus(event);
     }
 }

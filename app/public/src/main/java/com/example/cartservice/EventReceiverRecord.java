@@ -1,8 +1,9 @@
 package com.example.cartservice;
 
-public record EventReceiverRecord(Long eventId, Status status) {
+record EventReceiverRecord(String eventId, Status status) {
     enum Status {
         COMPLETED,
+        PROCESS,
         FAILED
     }
 }

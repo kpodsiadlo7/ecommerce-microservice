@@ -1,13 +1,17 @@
 package com.example.cartservice;
 
+import com.example.cartservice.auth.JwtRequestFilter;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
@@ -34,8 +38,9 @@ class CartManagementImpl implements CartManagement {
     }
 
     @Override
-    public Cart getUserCart(String userId) {
-        return cartMapper.toDomain(cartRepository.findByUserId(userId));
+    public Cart getUserCart(String userId, CartStatus status) {
+        return cartMapper.toDomain(cartRepository.findByUserIdAndStatus(userId, status)
+                .orElseThrow(()-> new EntityNotFoundException("Cart with given user id not exists "+userId)));
     }
 
     @Override
@@ -56,9 +61,10 @@ class CartManagementImpl implements CartManagement {
 
     @Override
     @Transactional
-    public Cart updateCart(Product productRequest, Cart cart, CartStatus status) {
-        Cart cartToUpdate = cartMapper.toDomain(cartRepository.findByUserId(cart.getUserId()));
-        cartToUpdate.setStatus(status);
+    public Cart updateCart(Product productRequest, Cart cart) {
+        Cart cartToUpdate = cartMapper.toDomain(cartRepository.findByUserIdAndStatus(cart.getUserId(), CartStatus.ACKNOWLEDGED)
+                .orElseThrow(() -> new EntityNotFoundException("Cart with status ACKNOWLEDGED not exists!")));
+
         Product productToUpdate = cartToUpdate.getProducts().stream()
                 .filter(product -> product.getProductId().equals(productRequest.getProductId()))
                 .findFirst().orElse(null);
@@ -71,9 +77,9 @@ class CartManagementImpl implements CartManagement {
     }
 
     @Override
-    public void updateEventStatus(Long eventId, String eventStatus) {
-        EventEntity eventEntity = eventRepository.findByIdAndEventStatus(eventId, EventEntity.EventStatus.PENDING)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with %d id - not found!", eventId)));
+    public void updateEventStatus(String eventId, String eventStatus) {
+        EventEntity eventEntity = eventRepository.findByCartIdAndEventStatus(eventId, EventEntity.EventStatus.PENDING)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with cart id '%s' - not found!", eventId)));
         eventEntity.updateStatus(EventEntity.EventStatus.valueOf(eventStatus));
         eventRepository.save(eventEntity);
         log.info("Event after update status {}", eventEntity);
@@ -85,6 +91,26 @@ class CartManagementImpl implements CartManagement {
         Cart clearCart = cartMapper.toDomain(cartRepository.save(cartMapper.toEntity(cart)));
         eventUnReserveProducts(cart.getCartId(), productsToUnReserve);
         return clearCart;
+    }
+
+    @Override
+    public String provideUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof JwtRequestFilter.CustomAuthenticationToken customToken) {
+            Map<String, Object> additionalParams = customToken.getAdditionalParams();
+            return (String) additionalParams.get("UniqueUserId");
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public Cart isCartForOrder(String userId) {
+        Cart cart = cartMapper.toDomain(cartRepository.findByUserIdAndStatus(userId, CartStatus.ACKNOWLEDGED)
+                .orElseThrow(() -> new EntityNotFoundException("Cart with status 'acknowledged' for order is not exists!")));
+        cart.setStatus(CartStatus.PROCESS);
+        cartRepository.save(cartMapper.toEntity(cart));
+        return cart;
     }
 
     private void eventUnReserveProducts(String cartId, List<EventProduct> productsToUnReserve) throws IOException, TimeoutException {

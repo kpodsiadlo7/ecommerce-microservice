@@ -1,6 +1,7 @@
 package com.example.gateway.exception;
 
 import com.example.usermanagement.exception.ErrorRecord;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,11 @@ public class GlobalErrorsHandler implements WebExceptionHandler {
         HttpStatus status;
 
         switch (ex) {
+            case ExpiredJwtException expiredJwtException-> {
+                log.error("Token error {}", ex.getMessage(), ex);
+                status = HttpStatus.UNAUTHORIZED;
+                errorRecord = new ErrorRecord(ex.getMessage(), status);
+            }
             case JwtException jwtException -> {
                 log.error("Authorization error {}", ex.getMessage(), ex);
                 status = HttpStatus.UNAUTHORIZED;

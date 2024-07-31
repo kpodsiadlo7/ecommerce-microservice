@@ -10,8 +10,9 @@ class EventService {
     private final CartManagement cartManagement;
 
     void updateCartStatus(EventReceiverRecord event) {
-        if (event == null || event.status() == null || event.eventId() == null)
+        if (event == null || event.status() == null || event.eventId() == null) {
             throw new IllegalArgumentException("Invalid event receiver record!");
+        }
         cartManagement.updateEventStatus(event.eventId(), String.valueOf(event.status()));
     }
 }

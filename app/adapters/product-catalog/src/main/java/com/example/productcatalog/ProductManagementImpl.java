@@ -59,7 +59,7 @@ class ProductManagementImpl implements ProductManagement {
         if (product.getQty() != null && product.getQty() >= quantity) {
             log.info("Can reserve");
             updateProductFromDb(quantity, availableProduct);
-            log.info("Product with id {} successfully reserved", product.getId());
+            log.info("Product with productId {} successfully reserved", product.getId());
             return Product.builder()
                     .id(product.getId())
                     .price(product.getPrice())
@@ -85,7 +85,7 @@ class ProductManagementImpl implements ProductManagement {
     }
 
     private void updateProductFromDb(Integer quantity, ProductEntity productEntity) {
-        log.warn("Update available and reserved quantity for product with id {}", productEntity.getId());
+        log.warn("Update available and reserved quantity for product with productId {}", productEntity.getId());
         productEntity.reserveQty(quantity);
         productRepository.save(productEntity);
     }

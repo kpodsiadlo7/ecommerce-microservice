@@ -45,7 +45,8 @@ public class JwtUtil {
         return parser.parseClaimsJwt(unsignedToken).getBody();
     }
 
-    public static String generateToken(final String systemName, final String uniqueUserId, final SecretKey secretKey, final String role) throws IOException {
+    public static String generateToken(final String systemName, final String uniqueUserId, final String role) throws IOException {
+        SecretKey secretKey = S2SVerification.getSecretSystemKey(systemName);
         log.info("Generate new token");
         Map<String, Object> claims = new HashMap<>();
         claims.put("system", systemName);

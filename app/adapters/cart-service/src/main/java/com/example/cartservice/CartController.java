@@ -20,21 +20,26 @@ class CartController {
 
     @PostMapping("/add-product")
     ResponseEntity<CartRecord> addProductToCart(@RequestParam Long productId,
-                                                @RequestHeader("PublicUserId") String userId,
                                                 @RequestParam(required = false) Integer quantity) throws IOException {
-        var response = cartMapper.toRecord(productService.addProductToCart(productId, userId, quantity));
+        var response = cartMapper.toRecord(productService.addProductToCart(productId, quantity));
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/clear")
-    ResponseEntity<CartRecord> clearMyCart(@RequestHeader("PublicUserId") String userId) throws IOException, TimeoutException {
-        var response = cartMapper.toRecord(productService.clearMyCart(userId));
+    ResponseEntity<CartRecord> clearMyCart() throws IOException, TimeoutException {
+        var response = cartMapper.toRecord(productService.clearMyCart());
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
     @GetMapping
-    ResponseEntity<CartRecord> getCart(@RequestHeader("PublicUserId") String userId) {
-        var response = cartMapper.toRecord(productService.getMyCart(userId));
+    ResponseEntity<CartRecord> getCart() {
+        var response = cartMapper.toRecord(productService.getMyCart());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/order/cart")
+    ResponseEntity<CartRecord> fetchCart() {
+        var response = cartMapper.toRecord(productService.fetchCart());
+        return ResponseEntity.ok(response);
     }
 }
