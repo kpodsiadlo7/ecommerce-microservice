@@ -11,6 +11,7 @@ class CartOrderAdapter {
 
     Order toOrder(CartInfoRecord cartInfoRecord) {
         return Order.builder()
+                .cartId(cartInfoRecord.cartId())
                 .products(productMapper.toDomainList(cartInfoRecord.products()))
                 .totalPrice(cartInfoRecord.totalPrice()).build();
     }

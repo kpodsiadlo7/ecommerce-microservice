@@ -41,6 +41,7 @@ class ProductMapper {
 
     ProductEntity toEntity(Product product){
         return new ProductEntity(
+                null, // ID encji jest generowane przez bazę danych
                 product.getProductId(),
                 product.getTitle(),
                 product.getDescription(),

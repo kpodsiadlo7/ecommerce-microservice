@@ -77,9 +77,9 @@ class CartManagementImpl implements CartManagement {
     }
 
     @Override
-    public void updateEventStatus(Long eventId, String eventStatus) {
-        EventEntity eventEntity = eventRepository.findByIdAndEventStatus(eventId, EventEntity.EventStatus.PENDING)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with %d productId - not found!", eventId)));
+    public void updateEventStatus(String eventId, String eventStatus) {
+        EventEntity eventEntity = eventRepository.findByCartIdAndEventStatus(eventId, EventEntity.EventStatus.PENDING)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with cart id '%s' - not found!", eventId)));
         eventEntity.updateStatus(EventEntity.EventStatus.valueOf(eventStatus));
         eventRepository.save(eventEntity);
         log.info("Event after update status {}", eventEntity);

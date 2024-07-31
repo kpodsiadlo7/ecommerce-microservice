@@ -13,7 +13,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 class ProductEntity {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private Long productId;
     private String title;
     private String description;
     private BigDecimal price;

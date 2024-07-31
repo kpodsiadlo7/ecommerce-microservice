@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.RequestHeader;
 interface CartClient {
 
     @GetMapping("/order/cart")
-    CartInfoRecord isCartExists(@RequestHeader("Authorization") String authorization);
+    CartInfoRecord fetchCartInfo(@RequestHeader("Authorization") String authorization);
 }

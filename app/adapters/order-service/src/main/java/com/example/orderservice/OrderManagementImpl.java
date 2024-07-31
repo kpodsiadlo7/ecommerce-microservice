@@ -24,7 +24,7 @@ public class OrderManagementImpl implements OrderManagement {
 
     @Override
     public Order fetchCartInfo(String systemToken) {
-        return cartOrderAdapter.toOrder(cartClient.isCartExists(systemToken));
+        return cartOrderAdapter.toOrder(cartClient.fetchCartInfo(systemToken));
     }
 
     @Override
