@@ -2,6 +2,8 @@ package com.example.cartservice;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 interface CartRepository extends JpaRepository<CartEntity,Long> {
     boolean existsByUserIdAndStatus(String userId, CartStatus status);
 
@@ -9,5 +11,5 @@ interface CartRepository extends JpaRepository<CartEntity,Long> {
 
     CartEntity findByUserId(String userId);
 
-    CartEntity findByCartId(String cartId);
+    Optional<CartEntity> findByUserIdAndStatus(String userId, CartStatus cartStatus);
 }

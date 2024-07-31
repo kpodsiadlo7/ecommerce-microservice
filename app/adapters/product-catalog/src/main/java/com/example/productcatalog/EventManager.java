@@ -76,7 +76,7 @@ public class EventManager {
             channel.queueDeclare(PRODUCT_STATUS, true, false, false, null);
 
             Gson gson = new Gson();
-            String message = gson.toJson(EventStatusRecord.builder().eventId(eventId).status(eventStatus).build());
+            String message = gson.toJson(EventStatusRecord.builder().eventId(String.valueOf(eventId)).status(eventStatus).build());
             channel.basicPublish("", PRODUCT_STATUS, null, message.getBytes(StandardCharsets.UTF_8));
             log.info("[RABBIT-MQ] Sent status '{}'", message);
 

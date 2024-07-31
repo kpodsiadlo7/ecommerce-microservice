@@ -1,7 +1,6 @@
 package com.example.cartservice;
 
 import com.s2s.JwtUtil;
-import com.s2s.S2SVerification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,26 +17,24 @@ class CartService {
 
     private final CartManagement cartManagement;
 
-    Cart addProductToCart(final Long productId, final String userId, Integer quantity) throws IOException {
+    Cart addProductToCart(final Long productId, Integer quantity) throws IOException {
+        final String userId = cartManagement.provideUserId();
+        if (userId == null) throw new IllegalArgumentException("UserId is not exists!");
+
         Cart cart = ensureUserHasCartAndCreate(userId);
         if (quantity == null) quantity = 1;
         preliminarilyAddProductsToCart(productId, userId, quantity, cart);
         Product product = checkProductAndReserve(productId, userId, quantity);
 
         if (product != null && product.getAvailableQty() != null && product.getPrice() != null) {
-            return cartManagement.updateCart(product, cart, CartStatus.ACKNOWLEDGED);
+            return cartManagement.updateCart(product, cart);
         }
         return cartManagement.saveCart(cart);
     }
 
     private Product checkProductAndReserve(Long productId, String userId, Integer quantity) throws IOException {
-        String systemToken = generateToken(userId);
+        String systemToken = "Bearer " + JwtUtil.generateToken("cart-service", userId, "SYSTEM");
         return cartManagement.checkProductAndReserve(productId, quantity, systemToken);
-    }
-
-    private static String generateToken(String userId) throws IOException {
-        String systemName = "cart-service";
-        return "Bearer " + JwtUtil.generateToken(systemName, userId, S2SVerification.getSecretSystemKey(systemName), "SYSTEM");
     }
 
     private Cart ensureUserHasCartAndCreate(String userId) {
@@ -51,7 +48,7 @@ class CartService {
                     .build();
             return cartManagement.createCartForUser(cart);
         }
-        return cartManagement.getUserCart(userId);
+        return cartManagement.getUserCart(userId, CartStatus.ACKNOWLEDGED);
     }
 
     private void preliminarilyAddProductsToCart(Long productId, String userId, Integer quantity, Cart cart) {
@@ -59,7 +56,10 @@ class CartService {
         cart.setUserId(userId);
     }
 
-    Cart getMyCart(final String userId) {
+    Cart getMyCart() {
+        final String userId = cartManagement.provideUserId();
+        if (userId == null) throw new IllegalArgumentException("UserId is not exists!");
+
         return ensureUserHasCartAndCreate(userId);
     }
 
@@ -71,8 +71,8 @@ class CartService {
         return cartId;
     }
 
-    Cart clearMyCart(String userId) throws IOException, TimeoutException {
-        Cart cart = getMyCart(userId);
+    Cart clearMyCart() throws IOException, TimeoutException {
+        Cart cart = getMyCart();
         if (cart.getProducts().isEmpty()) {
             log.info("Cart was empty");
             return cart;
@@ -93,5 +93,16 @@ class CartService {
                 .map(product -> EventProduct.builder()
                         .productId(product.getProductId())
                         .qty(product.getAvailableQty()).build()).toList();
+    }
+
+    public Cart fetchCart() {
+        final String userId = cartManagement.provideUserId();
+        if (userId == null) throw new IllegalArgumentException("UserId is not exists!");
+
+        return getOrderCart(userId);
+    }
+
+    private Cart getOrderCart(String userId) {
+        return cartManagement.isCartForOrder(userId);
     }
 }

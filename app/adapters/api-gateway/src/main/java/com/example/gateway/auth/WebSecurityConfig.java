@@ -16,6 +16,7 @@ public class WebSecurityConfig {
         http
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers("/cart/**").permitAll()
+                        .pathMatchers("/order/**").permitAll()
                         .pathMatchers(HttpMethod.POST, "/login", "/register").permitAll()
                         .anyExchange().authenticated()
                 )

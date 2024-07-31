@@ -20,6 +20,7 @@ import java.util.concurrent.TimeoutException;
 @RequiredArgsConstructor
 class EventListener {
     private final static String UPDATE_STATUS = "product_status";
+    private final static String CART_STATUS = "cart_status";
 
     private final EventService eventService;
 
@@ -33,6 +34,7 @@ class EventListener {
         Channel channel = connection.createChannel();
 
         channel.queueDeclare(UPDATE_STATUS, true, false, false, null);
+        channel.queueDeclare(CART_STATUS, true, false, false, null);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
@@ -41,6 +43,8 @@ class EventListener {
             processResponse(message);
         };
         channel.basicConsume(UPDATE_STATUS, true, deliverCallback, consumerTag -> {
+        });
+        channel.basicConsume(CART_STATUS, true, deliverCallback, consumerTag -> {
         });
     }
 

@@ -1,4 +1,4 @@
-package com.example.cartservice;
+package com.example.orderservice;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,20 +6,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity(name = "carts")
+@Entity
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-class CartEntity {
+class OrderEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String cartId;
+    private String orderId;
     private String userId;
-    private BigDecimal totalPrice;
-    private CartStatus status;
+    private String cartId;
+    private LocalDateTime orderDate;
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ProductEntity> products;
+    private BigDecimal totalPrice;
+    private OrderStatus status;
 }

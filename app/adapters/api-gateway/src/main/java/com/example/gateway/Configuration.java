@@ -19,6 +19,7 @@ public class Configuration {
     private final UserManagementClient userManagementClient;
 
     private static final String USER_MANAGEMENT_KEY_PATH = "app/adapters/user-management/key.txt";
+    private static final String API_GATEWAY_KEY_PATH = "app/adapters/api-gateway/key.txt";
 
     @Bean
     CommandLineRunner addSystemToTrustedStore() {
@@ -28,7 +29,7 @@ public class Configuration {
             S2SVerification.addToTrustedStore("order-service", null);
             S2SVerification.addToTrustedStore("payment-service", null);
             S2SVerification.addToTrustedStore("product-catalog", null);
-            S2SVerification.addToTrustedStore("profile-service", null);
+            S2SVerification.addToTrustedStore("gateway", KeyProvider.provideKey(API_GATEWAY_KEY_PATH));
             S2SVerification.addToTrustedStore("user-management", KeyProvider.provideKey(USER_MANAGEMENT_KEY_PATH));
         };
     }
