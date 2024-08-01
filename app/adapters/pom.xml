@@ -17,7 +17,6 @@
         <module>order-service</module>
         <module>payment-service</module>
         <module>product-catalog</module>
-        <module>profile-service</module>
         <module>user-management</module>
     </modules>
 
