@@ -19,11 +19,13 @@ interface CartManagement {
 
     Cart updateCart(Product productRequest, Cart cart);
 
-    void updateEventStatus(String eventId, String eventStatus);
+    void updateCartStatusAfterPayment(String eventId, String eventStatus) throws IOException, TimeoutException;
 
     Cart updateCart(Cart cart, List<EventProduct> products) throws IOException, TimeoutException;
 
     String provideUserId();
 
-    Cart isCartForOrder(String userId);
+    Cart fetchCartForUser(String userId);
+
+    void updateEventStatusAfterUnsresevedProducts(String eventId, String eventStatus);
 }

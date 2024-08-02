@@ -5,5 +5,5 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-record EventRecord(Long eventId, List<EventProductRecord> products) {
+record EventRecord(String eventId, List<EventProductRecord> products) {
 }

@@ -18,7 +18,7 @@ import java.util.concurrent.TimeoutException;
 class EventSender {
     private final static String UPDATE_PRODUCT = "product_update";
 
-    void unReserveProducts(Long cartId, List<EventProductRecord> productsToUnReserve) throws IOException, TimeoutException {
+    void unReserveProducts(String cartId, List<EventProductRecord> productsToUnReserve) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         factory.setUsername("user");

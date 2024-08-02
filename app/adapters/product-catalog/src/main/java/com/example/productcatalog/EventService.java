@@ -11,11 +11,11 @@ public class EventService {
 
     private final ProductManagement productManagement;
 
-    boolean unReserveProducts(EventReceiverRecord eventReceiverRecord) {
+    boolean unreserveProducts(EventReceiverRecord eventReceiverRecord) {
         if (eventReceiverRecord == null || eventReceiverRecord.products() == null) return false;
         List<Product> products = eventReceiverRecord.products().stream()
-                .map(product -> Product.builder().id(product.productId()).qty(product.qty()).build())
+                .map(product -> Product.builder().id(Long.valueOf(product.productId())).qty(product.qty()).build())
                 .toList();
-        return productManagement.unReserveProducts(products);
+        return productManagement.unreserveProducts(products);
     }
 }

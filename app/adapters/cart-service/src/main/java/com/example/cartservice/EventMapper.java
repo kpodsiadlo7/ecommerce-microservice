@@ -29,4 +29,26 @@ class EventMapper {
                 eventProduct.getQty()
         );
     }
+
+    public List<EventProduct> toEventProductList(List<Product> products) {
+        return products.stream().map(this::toEventProduct).toList();
+    }
+
+    public EventProduct toEventProduct(Product product){
+        return new EventProduct(
+                product.getProductId(),
+                product.getAvailableQty()
+        );
+    }
+
+    public List<EventProductRecord> toEventProductRecordList(List<EventProduct> products) {
+        return products.stream().map(this::toEventProductRecord).toList();
+    }
+
+    EventProductRecord toEventProductRecord(EventProduct product){
+        return new EventProductRecord(
+                product.getProductId(),
+                product.getQty()
+        );
+    }
 }

@@ -11,7 +11,7 @@ spring:
     driverClassName: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
 #Eureka client
 eureka:

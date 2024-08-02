@@ -5,7 +5,7 @@ import lombok.Builder;
 @Builder
 record EventStatusRecord(String eventId, Status status) {
     enum Status {
-        COMPLETED,
+        COMPLETE,
         FAILED
     }
 }

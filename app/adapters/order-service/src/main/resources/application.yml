@@ -12,7 +12,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
 #Eureka client
 eureka:
@@ -23,5 +23,6 @@ eureka:
     fetchRegistry: true
 
 #Client urls
-cart-service:
-  url: http://localhost:9050/mycart/
+service-url:
+  cart: http://localhost:9050/mycart/
+  payment: http://localhost:9080

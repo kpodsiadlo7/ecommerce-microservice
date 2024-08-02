@@ -74,13 +74,15 @@ class ProductManagementImpl implements ProductManagement {
 
     @Override
     @Transactional
-    public boolean unReserveProducts(List<Product> products) {
+    public boolean unreserveProducts(List<Product> products) {
+        log.info("Unreserved products {}", products);
         products.forEach(product -> {
             ProductEntity entity = productRepository.findById(product.getId())
                     .orElseThrow(() -> new IllegalArgumentException(String.format("Product %d not found!", product.getId())));
             entity.unReserveQty(product.getQty());
             productRepository.save(entity);
         });
+        log.info("Unreserved completed");
         return true;
     }
 

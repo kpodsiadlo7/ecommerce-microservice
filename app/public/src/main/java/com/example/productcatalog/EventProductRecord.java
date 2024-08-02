@@ -3,5 +3,5 @@ package com.example.productcatalog;
 import lombok.Builder;
 
 @Builder
-record EventProductRecord(Long productId, Integer qty) {
+record EventProductRecord(String productId, Integer qty) {
 }
