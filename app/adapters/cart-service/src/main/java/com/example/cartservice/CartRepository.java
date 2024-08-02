@@ -12,4 +12,6 @@ interface CartRepository extends JpaRepository<CartEntity,Long> {
     CartEntity findByUserId(String userId);
 
     Optional<CartEntity> findByUserIdAndStatus(String userId, CartStatus cartStatus);
+
+    Optional<CartEntity> findByCartIdAndStatus(String eventId, CartStatus cartStatus);
 }

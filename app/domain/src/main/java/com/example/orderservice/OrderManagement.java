@@ -13,4 +13,8 @@ interface OrderManagement {
     String provideUserId();
 
     boolean isOrderExistsForCart(String cartId);
+
+    void updateOrderStatus(PaymentInfo paymentInfo);
+
+    OrderInfo fetchOrderInfo(String userId);
 }

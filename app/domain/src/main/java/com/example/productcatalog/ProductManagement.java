@@ -13,5 +13,5 @@ interface ProductManagement {
 
     Product checkProductAvailabilityAndReserve(Long productId, Integer quantity);
 
-    boolean unReserveProducts(List<Product> products);
+    boolean unreserveProducts(List<Product> products);
 }

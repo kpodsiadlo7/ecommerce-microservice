@@ -1,5 +1,4 @@
 package com.example.orderservice;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +42,14 @@ class OrderMapper {
                 productMapper.fromEntityList(orderEntity.getProducts()),
                 orderEntity.getTotalPrice(),
                 orderEntity.getStatus()
+        );
+    }
+
+    public OrderInfoRecord toOrderInfoRecord(OrderInfo orderInfo) {
+        return new OrderInfoRecord(
+                orderInfo.getCartId(),
+                orderInfo.getOrderId(),
+                orderInfo.getTotalPrice()
         );
     }
 }

@@ -1,27 +1,25 @@
 package com.example.productcatalog;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.gson.GsonBuilder;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class EventManager {
+public class EventListener {
     private final static String PRODUCT_RECEIVE = "product_update";
     private final static String PRODUCT_STATUS = "product_status";
-    private static final Logger log = LoggerFactory.getLogger(EventManager.class);
 
     private final EventService eventService;
 
@@ -47,24 +45,23 @@ public class EventManager {
     }
 
     private void processResponse(String message) {
+        Gson gson = new GsonBuilder().create();
+        EventReceiverRecord event = null;
         try {
-            Gson gson = new Gson();
-            Type fileType = new TypeToken<EventReceiverRecord>() {
-            }.getType();
-            EventReceiverRecord event = gson.fromJson(message, fileType);
-
-            if (eventService.unReserveProducts(event)) {
-                sendStatus(event.eventId(), EventStatusRecord.Status.COMPLETED);
-            } else {
-                sendStatus(event.eventId(), EventStatusRecord.Status.FAILED);
-            }
-        } catch (
-                Exception e) {
-            log.error("Failed to parse JSON: {}", e.getMessage(), e);
+            event = gson.fromJson(message, EventReceiverRecord.class);
+            log.info("Successfully parsed event: {}", event);
+        } catch (Exception e) {
+            log.error("Failed to parse JSON: {}", message, e);
+        }
+        if (event == null) throw new RuntimeException("Event is null!");
+        if (eventService.unreserveProducts(event)) {
+            sendStatus(event.eventId(), EventStatusRecord.Status.COMPLETE);
+        } else {
+            sendStatus(event.eventId(), EventStatusRecord.Status.FAILED);
         }
     }
 
-    private void sendStatus(Long eventId, EventStatusRecord.Status eventStatus) {
+    private void sendStatus(String eventId, EventStatusRecord.Status eventStatus) {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         factory.setUsername("user");

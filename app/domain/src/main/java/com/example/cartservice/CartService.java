@@ -38,17 +38,17 @@ class CartService {
     }
 
     private Cart ensureUserHasCartAndCreate(String userId) {
-        if (!cartManagement.userHasCart(userId, CartStatus.ACKNOWLEDGED)) {
+        if (!cartManagement.userHasCart(userId, CartStatus.PROCESS)) {
             Cart cart = Cart.builder()
                     .cartId(generateCartId())
                     .userId(userId)
-                    .status(CartStatus.ACKNOWLEDGED)
+                    .status(CartStatus.PROCESS)
                     .totalPrice(BigDecimal.ZERO)
                     .products(new ArrayList<>())
                     .build();
             return cartManagement.createCartForUser(cart);
         }
-        return cartManagement.getUserCart(userId, CartStatus.ACKNOWLEDGED);
+        return cartManagement.getUserCart(userId, CartStatus.PROCESS);
     }
 
     private void preliminarilyAddProductsToCart(Long productId, String userId, Integer quantity, Cart cart) {
@@ -98,11 +98,6 @@ class CartService {
     public Cart fetchCart() {
         final String userId = cartManagement.provideUserId();
         if (userId == null) throw new IllegalArgumentException("UserId is not exists!");
-
-        return getOrderCart(userId);
-    }
-
-    private Cart getOrderCart(String userId) {
-        return cartManagement.isCartForOrder(userId);
+        return cartManagement.fetchCartForUser(userId);
     }
 }

@@ -2,6 +2,7 @@ package com.example.orderservice;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,10 +37,14 @@ class ProductMapper {
     }
 
     public List<ProductEntity> toEntityList(List<Product> products) {
-        return products.stream().map(this::toEntity).toList();
+        List<ProductEntity> productEntities = new ArrayList<>();
+        for (var product : products) {
+            productEntities.add(toEntity(product));
+        }
+        return productEntities;
     }
 
-    ProductEntity toEntity(Product product){
+    ProductEntity toEntity(Product product) {
         return new ProductEntity(
                 null, // ID encji jest generowane przez bazę danych
                 product.getProductId(),
@@ -54,7 +59,7 @@ class ProductMapper {
         return products.stream().map(this::fromEntity).toList();
     }
 
-    Product fromEntity(ProductEntity productEntity){
+    Product fromEntity(ProductEntity productEntity) {
         return new Product(
                 productEntity.getProductId(),
                 productEntity.getTitle(),

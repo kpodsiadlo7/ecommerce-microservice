@@ -21,3 +21,6 @@ eureka:
       defaultZone: http://localhost:8761/eureka
     registerWithEureka: true
     fetchRegistry: true
+
+service-url:
+  order: http://localhost:9090

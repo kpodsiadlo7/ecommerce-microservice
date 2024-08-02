@@ -50,4 +50,10 @@ class OrderService {
         }
         return orderId;
     }
+
+    public OrderInfo fetchOrder() {
+        final String userId = orderManagement.provideUserId();
+        if (userId == null) throw new IllegalArgumentException("UserId is not exists!");
+        return orderManagement.fetchOrderInfo(userId);
+    }
 }

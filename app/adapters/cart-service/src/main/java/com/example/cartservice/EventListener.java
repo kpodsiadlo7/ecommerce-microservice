@@ -18,8 +18,8 @@ import java.util.concurrent.TimeoutException;
 @Service
 @RequiredArgsConstructor
 class EventListener {
-    private final static String UPDATE_STATUS = "product_status";
-    private final static String CART_STATUS = "cart_status";
+    private final static String PAYMENT_STATUS = "payment_status";
+    private final static String PRODUCT_STATUS = "product_status";
 
     private final EventService eventService;
 
@@ -32,31 +32,44 @@ class EventListener {
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
 
-        channel.queueDeclare(UPDATE_STATUS, true, false, false, null);
-        channel.queueDeclare(CART_STATUS, true, false, false, null);
+        channel.queueDeclare(PAYMENT_STATUS, true, false, false, null);
+        channel.queueDeclare(PRODUCT_STATUS, true, false, false, null);
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), StandardCharsets.UTF_8);
             log.info("[RABBIT-MQ] Received '{}'", message);
 
-            processResponse(message);
+            try {
+                processResponse(message, consumerTag);
+            } catch (TimeoutException e) {
+                throw new RuntimeException(e);
+            }
         };
-        channel.basicConsume(UPDATE_STATUS, true, deliverCallback, consumerTag -> {
+
+        channel.basicConsume(PAYMENT_STATUS, true, "payment_status", deliverCallback, consumerTag -> {
         });
-        channel.basicConsume(CART_STATUS, true, deliverCallback, consumerTag -> {
+        channel.basicConsume(PRODUCT_STATUS, true, "product_status", deliverCallback, consumerTag -> {
         });
     }
 
-    private void processResponse(String message) {
+    private void processResponse(String message, String consumerTag) throws IOException, TimeoutException {
         Gson gson = new GsonBuilder().create();
-        EventReceiverRecord event = null;
+        EventReceiverRecord event;
         try {
             event = gson.fromJson(message, EventReceiverRecord.class);
+            if (event == null || event.status() == null || event.eventId() == null) {
+                throw new IllegalArgumentException("Invalid event receiver record!");
+            }
             log.info("Successfully parsed event: {}", event);
+            if ("payment_status".equals(consumerTag)) {
+                log.info("Processing payment status");
+                eventService.updateCartStatus(event);
+            } else if ("product_status".equals(consumerTag)) {
+                log.info("Processing product status");
+                eventService.updateEventStatus(event);
+            }
         } catch (Exception e) {
             log.error("Failed to parse JSON: {}", message, e);
         }
-        //todo aktualizacja statusu dopiero po zakończonej płatności na completed lub failed
-        //eventService.updateCartStatus(event);
     }
 }

@@ -40,7 +40,7 @@ class CartManagementImpl implements CartManagement {
     @Override
     public Cart getUserCart(String userId, CartStatus status) {
         return cartMapper.toDomain(cartRepository.findByUserIdAndStatus(userId, status)
-                .orElseThrow(()-> new EntityNotFoundException("Cart with given user id not exists "+userId)));
+                .orElseThrow(() -> new EntityNotFoundException("Cart with given user id not exists " + userId)));
     }
 
     @Override
@@ -62,7 +62,7 @@ class CartManagementImpl implements CartManagement {
     @Override
     @Transactional
     public Cart updateCart(Product productRequest, Cart cart) {
-        Cart cartToUpdate = cartMapper.toDomain(cartRepository.findByUserIdAndStatus(cart.getUserId(), CartStatus.ACKNOWLEDGED)
+        Cart cartToUpdate = cartMapper.toDomain(cartRepository.findByUserIdAndStatus(cart.getUserId(), CartStatus.PROCESS)
                 .orElseThrow(() -> new EntityNotFoundException("Cart with status ACKNOWLEDGED not exists!")));
 
         Product productToUpdate = cartToUpdate.getProducts().stream()
@@ -74,15 +74,6 @@ class CartManagementImpl implements CartManagement {
             cartToUpdate.updateCartItem(productRequest);
         }
         return cartMapper.toDomain(cartRepository.save(cartMapper.toEntity(cartToUpdate)));
-    }
-
-    @Override
-    public void updateEventStatus(String eventId, String eventStatus) {
-        EventEntity eventEntity = eventRepository.findByCartIdAndEventStatus(eventId, EventEntity.EventStatus.PENDING)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with cart id '%s' - not found!", eventId)));
-        eventEntity.updateStatus(EventEntity.EventStatus.valueOf(eventStatus));
-        eventRepository.save(eventEntity);
-        log.info("Event after update status {}", eventEntity);
     }
 
     @Override
@@ -105,22 +96,49 @@ class CartManagementImpl implements CartManagement {
 
     @Override
     @Transactional
-    public Cart isCartForOrder(String userId) {
-        Cart cart = cartMapper.toDomain(cartRepository.findByUserIdAndStatus(userId, CartStatus.ACKNOWLEDGED)
+    public Cart fetchCartForUser(String userId) {
+        Cart cart = cartMapper.toDomain(cartRepository.findByUserIdAndStatus(userId, CartStatus.PROCESS)
                 .orElseThrow(() -> new EntityNotFoundException("Cart with status 'acknowledged' for order is not exists!")));
-        cart.setStatus(CartStatus.PROCESS);
+        cart.setStatus(CartStatus.CLOSED);
         cartRepository.save(cartMapper.toEntity(cart));
         return cart;
     }
 
+    @Override
+    public void updateEventStatusAfterUnsresevedProducts(String eventId, String eventStatus) {
+        EventEntity event = eventRepository.findByCartId(eventId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Event with given cart id '%s' not exists!", eventId)));
+        event.updateStatus(EventEntity.EventStatus.valueOf(eventStatus));
+        eventRepository.save(event);
+        log.info("Event '{}' updated -> status '{}'", eventId, eventStatus);
+    }
+
+    @Override
+    public void updateCartStatusAfterPayment(String eventId, String eventStatus) throws IOException, TimeoutException {
+        if (EventEntity.EventStatus.valueOf(eventStatus).equals(EventEntity.EventStatus.FAILED)) {
+            Cart cart = cartMapper.toDomain(cartRepository.findByCartIdAndStatus(eventId, CartStatus.CLOSED)
+                    .orElseThrow(() -> new EntityNotFoundException(String.format("Cart with given id '%s' not exists", eventId))));
+            List<EventProduct> products = eventMapper.toEventProductList(cart.getProducts());
+            createEvent(eventId, products);
+            eventSender.unReserveProducts(eventId, eventMapper.toEventProductRecordList(products));
+            log.warn("Event order failed - unreserved products {}", products);
+        }
+        log.info("Event '{}' status '{}'", eventId, eventStatus);
+    }
+
     private void eventUnReserveProducts(String cartId, List<EventProduct> productsToUnReserve) throws IOException, TimeoutException {
+        EventEntity eventEntity = createEvent(cartId, productsToUnReserve);
+        Long eventId = eventEntity.getId();
+        eventSender.unReserveProducts(String.valueOf(eventId), eventMapper.toEventProductRecordList(productsToUnReserve));
+    }
+
+    private EventEntity createEvent(String cartId, List<EventProduct> productsToUnReserve) {
         EventEntity eventEntity = new EventEntity(
                 null, // ID encji jest generowane przez bazę danych
                 cartId,
-                EventEntity.EventStatus.PENDING,
+                EventEntity.EventStatus.PROCESS,
                 eventMapper.toEntityList(productsToUnReserve)
         );
-        Long eventId = eventRepository.save(eventEntity).getId();
-        eventSender.unReserveProducts(eventId, eventMapper.toRecordList(productsToUnReserve));
+        return eventRepository.save(eventEntity);
     }
 }

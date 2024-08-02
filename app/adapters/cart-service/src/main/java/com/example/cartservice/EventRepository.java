@@ -7,5 +7,5 @@ import java.util.Optional;
 
 @Repository
 interface EventRepository extends JpaRepository<EventEntity, Long> {
-    Optional<EventEntity> findByCartIdAndEventStatus(String eventId, EventEntity.EventStatus status);
+    Optional<EventEntity> findByCartId(String eventId);
 }

@@ -1,4 +1,4 @@
-package com.example.orderservice;
+package com.example.paymentservice;
 
 import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
@@ -15,20 +15,20 @@ import java.util.concurrent.TimeoutException;
 @Component
 @RequiredArgsConstructor
 class EventSender {
-    private final static String UPDATE_PRODUCT = "cart_status";
+    private final static String UPDATE_PAYMENT = "payment_status";
 
-    void updateCartStatus(String cartId, OrderStatus status) throws IOException, TimeoutException {
+    void updatePaymentStatus(String cartId, PaymentStatus status) throws IOException, TimeoutException {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
         factory.setUsername("user");
         factory.setPassword("password");
 
         try (Connection connection = factory.newConnection(); Channel channel = connection.createChannel()) {
-            channel.queueDeclare(UPDATE_PRODUCT, true, false, false, null);
+            channel.queueDeclare(UPDATE_PAYMENT, true, false, false, null);
 
             Gson gson = new Gson();
             String message = gson.toJson(EventRecord.builder().eventId(cartId).status(status).build());
-            channel.basicPublish("", UPDATE_PRODUCT, null, message.getBytes());
+            channel.basicPublish("", UPDATE_PAYMENT, null, message.getBytes());
             log.info("[RABBIT-MQ] Event sent {}", message);
         }
     }

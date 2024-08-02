@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-class OrderEntity {
+class OrderEntity implements OrderUpdater {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -25,4 +25,9 @@ class OrderEntity {
     private List<ProductEntity> products;
     private BigDecimal totalPrice;
     private OrderStatus status;
+
+    @Override
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
+    }
 }

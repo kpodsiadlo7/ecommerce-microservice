@@ -1,7 +1,8 @@
 package com.example.orderservice;
 
-public enum OrderStatus {
+enum OrderStatus {
     PROCESS,
-    COMPLETED,
+    COMPLETE,
+    PAYMENT,
     FAILED
 }

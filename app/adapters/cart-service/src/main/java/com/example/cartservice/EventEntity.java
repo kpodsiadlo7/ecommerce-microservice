@@ -33,8 +33,8 @@ class EventEntity implements EventUpdater {
     }
 
     enum EventStatus {
-        PENDING,
-        COMPLETED,
+        PROCESS,
+        COMPLETE,
         FAILED
     }
 }
