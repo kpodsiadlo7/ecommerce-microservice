@@ -61,7 +61,7 @@ Aplikacja została zaprojektowana z myślą o spójnej i bezpiecznej komunikacji
 3. Na podstawie tokena:
    - **CartManagement** dodaje produkt do koszyka konkretnego użytkownika.  
    - Jeśli koszyk jeszcze nie istnieje, jest automatycznie tworzony.  
-4. **CartManagement** sprawdza, czy produkt jest dostępny w magazynie (**ProductManagement**) przed dodaniem go do koszyka.
+4. **CartManagement** sprawdza, czy produkt jest dostępny w magazynie (**ProductManagement**) przed dodaniem go do koszyka (komunikacja synchroniczna).
 
 ## 4. Składanie zamówienia
 1. Po złożeniu zamówienia koszyk przechodzi w nowy status **"Pending"**.  
