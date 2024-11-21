@@ -22,6 +22,11 @@ Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spri
    - Obsługa zdarzeń **asynchronicznych** za pomocą RabbitMQ.
    - Możliwość działania **synchronicznego**, np. dla kluczowych operacji wymagających bezpośrednich odpowiedzi.
 
+5. **Spersonalizowana komunikacja na podstawie tokena JWT:**  
+   - Każde żądanie użytkownika zawiera **token JWT**, w którym zakodowana jest informacja o tożsamości użytkownika.  
+   - Dzięki temu aplikacja może jednoznacznie określić, który użytkownik wysyła zapytanie, i dostarczyć mu tylko te dane, do których ma uprawnienia.  
+   - Rozwiązanie to eliminuje konieczność ciągłego przekazywania danych logowania przy każdym żądaniu, co zwiększa wygodę użytkowania i bezpieczeństwo systemu.
+
 ---
 
   Prosty schemat architektoniczny
