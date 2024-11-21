@@ -1,6 +1,6 @@
 # Opis aplikacji
 
-Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spring Boot**, **Spring Security** oraz **OpenFeign**. Aplikacja została zaprojektowana zgodnie z architekturą mikroserwisową i wspiera komunikację zarówno synchroniczną, jak i asynchroniczną, w oparciu o zdarzenia.
+Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spring Boot**, **Spring Security**, **Eureka**, **Api-Gateway**, **RabbitMQ** oraz **OpenFeign**. Aplikacja została zaprojektowana zgodnie z architekturą mikroserwisową i wspiera komunikację zarówno synchroniczną, jak i asynchroniczną, w oparciu o zdarzenia.
 
 ## Kluczowe funkcjonalności i cechy
 
