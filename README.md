@@ -1,6 +1,6 @@
 # Opis aplikacji
 
-Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spring Boot**, **Spring Security**, **Eureka**, **Api-Gateway**, **RabbitMQ** oraz **OpenFeign**. Aplikacja została zaprojektowana zgodnie z architekturą mikroserwisową i wspiera komunikację zarówno synchroniczną, jak i asynchroniczną, w oparciu o zdarzenia.
+Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spring Boot**, **Spring Security**, **Eureka**, **Api-Gateway**, **RabbitMQ**, **Database H2** oraz **OpenFeign**. Aplikacja została zaprojektowana zgodnie z architekturą mikroserwisową i wspiera komunikację zarówno synchroniczną, jak i asynchroniczną, w oparciu o zdarzenia.
 
 ## Kluczowe funkcjonalności i cechy
 
@@ -15,7 +15,7 @@ Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spri
    - Implementacja **Eureka Server** jako systemu rejestracji i wykrywania usług (**service discovery**).
 
 3. **Bezpieczeństwo:**
-   - Całość aplikacji została zabezpieczona przy użyciu **tokenów JWT (JSON Web Token)**, co zapewnia bezpieczne uwierzytelnianie i autoryzację.
+   - Całość aplikacji została zabezpieczona przy użyciu **Spring Security oraz tokenów JWT (JSON Web Token)**, co zapewnia bezpieczne uwierzytelnianie i autoryzację.
    - System obsługuje **rejestrację nowych użytkowników** oraz **logowanie**.
 
 4. **Komunikacja i model działania:**
