@@ -29,6 +29,59 @@ Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spri
 
 ---
 
-  Prosty schemat architektoniczny
+Prosty schemat architektoniczny
 
    ![image](https://github.com/user-attachments/assets/c7696dfa-4d1d-4ec5-adcd-d428bbe284bb)
+
+---
+
+User story
+
+# Story - Przepływ działania aplikacji
+
+Aplikacja została zaprojektowana z myślą o spójnej i bezpiecznej komunikacji między mikroserwisami, opierając się na **API Gateway**, tokenach **JWT** oraz **RabbitMQ**. Poniżej przedstawiono krok po kroku główne przypadki użycia:
+
+## 1. Logowanie użytkownika
+1. Użytkownik wysyła żądanie logowania do **API Gateway**.  
+2. **API Gateway** kieruje żądanie do mikroserwisu **UserManagement**, który:
+   - Weryfikuje, czy użytkownik istnieje.  
+   - Jeśli tak, generuje i zwraca **token JWT**.  
+   - Jeśli nie, zwraca odpowiedź odmowy dostępu.  
+
+## 2. Pobieranie listy produktów
+1. Użytkownik, posiadając token JWT, wysyła żądanie do **API Gateway** o pobranie listy produktów.  
+2. **API Gateway** przesyła żądanie do **UserManagement**, aby:
+   - Zweryfikować token JWT (czy użytkownik ma uprawnienia do tego endpointu i czy token nie wygasł).  
+   - Jeśli token jest poprawny, **UserManagement** generuje nowy token, uprawniony do komunikacji z **ProductManagement**, oraz przesyła informacje o użytkowniku do **API Gateway** w tokenie JWT.  
+3. **API Gateway** przesyła żądanie do **ProductManagement** wraz z nowym tokenem, a **ProductManagement** zwraca listę dostępnych produktów dla danego użytkownika.
+
+## 3. Dodawanie produktu do koszyka
+1. Użytkownik wysyła żądanie na endpoint `addProductToCart` przez **API Gateway**.  
+2. Proces weryfikacji wygląda tak samo jak w przypadku pobierania produktów (weryfikacja tokena i generowanie nowego).  
+3. Na podstawie tokena:
+   - **CartManagement** dodaje produkt do koszyka konkretnego użytkownika.  
+   - Jeśli koszyk jeszcze nie istnieje, jest automatycznie tworzony.  
+4. **CartManagement** sprawdza, czy produkt jest dostępny w magazynie (**ProductManagement**) przed dodaniem go do koszyka.
+
+## 4. Składanie zamówienia
+1. Po złożeniu zamówienia koszyk przechodzi w nowy status **"Pending"**.  
+2. W przypadku kolejnych prób dodania produktów do koszyka:
+   - Tworzony jest nowy koszyk, ponieważ poprzedni jest już w trakcie przetwarzania.  
+   - Produkty z koszyka w statusie **"Pending"** są automatycznie rezerwowane w **ProductManagement** poprzez asynchroniczną komunikację **RabbitMQ**.
+
+## 5. Obsługa płatności
+1. **CartManagement** i **ProductManagement** nasłuchują na kolejkę **RabbitMQ** w celu obsługi zdarzeń związanych z płatnościami:
+   - Jeśli płatność zakończy się niepowodzeniem (**"Failed"**):
+     - **CartManagement** zmienia status koszyka na **"Failed"**.
+     - **ProductManagement** zwraca produkty do magazynu, aby były ponownie dostępne do zakupu.  
+   - Jeśli płatność zakończy się sukcesem (**"Completed"**):
+     - Koszyk zmienia swój status na **"Completed"**.
+     - Produkty zostają usunięte z rezerwacji w **ProductManagement**.
+
+---
+
+Dzięki temu procesowi aplikacja zapewnia:
+- Bezpieczeństwo i autoryzację na każdym kroku dzięki **JWT**.  
+- Automatyzację zarządzania koszykiem (tworzenie koszyków, zmiana statusów).  
+- Obsługę zdarzeń w czasie rzeczywistym za pomocą **RabbitMQ**, co pozwala na synchronizację między mikroserwisami.  
+
