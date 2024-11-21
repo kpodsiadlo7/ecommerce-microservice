@@ -15,7 +15,7 @@ Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spri
    - Implementacja **Eureka Server** jako systemu rejestracji i wykrywania usług (**service discovery**).
 
 3. **Bezpieczeństwo:**
-   - Całość aplikacji została zabezpieczona przy użyciu **Spring Security oraz tokenów JWT (JSON Web Token)**, co zapewnia bezpieczne uwierzytelnianie i autoryzację.
+   - Całość aplikacji została zabezpieczona przy użyciu **Spring Security oraz tokenów JWT**, co zapewnia bezpieczne uwierzytelnianie i autoryzację.
    - System obsługuje **rejestrację nowych użytkowników** oraz **logowanie**.
 
 4. **Komunikacja i model działania:**
@@ -25,7 +25,7 @@ Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spri
 5. **Spersonalizowana komunikacja na podstawie tokena JWT:**  
    - Każde żądanie użytkownika zawiera **token JWT**, w którym zakodowana jest informacja o tożsamości użytkownika.  
    - Dzięki temu aplikacja może jednoznacznie określić, który użytkownik wysyła zapytanie, i dostarczyć mu tylko te dane, do których ma uprawnienia.  
-   - Rozwiązanie to eliminuje konieczność ciągłego przekazywania danych logowania przy każdym żądaniu, co zwiększa wygodę użytkowania i bezpieczeństwo systemu.
+   - Rozwiązanie to eliminuje konieczność ciągłego przekazywania danych logowania przy każdym żądaniu.
 
 ---
 
