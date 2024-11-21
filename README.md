@@ -12,7 +12,7 @@ Aplikacja mikroserwisowa w języku **Java**, wykorzystująca technologię **Spri
 2. **Zarządzanie ruchem i integracja:**
    - Użycie **API Gateway** do zarządzania ruchem i centralnej obsługi żądań.
    - Wykorzystanie **RabbitMQ** jako systemu kolejkowego do obsługi zdarzeń w komunikacji asynchronicznej.
-   - Implementacja **Eureka Server** jako systemu rejestracji i wykrywania usług (**service discovery**).
+   - Implementacja **Eureka Server** jako systemu rejestracji i wykrywania usług.
 
 3. **Bezpieczeństwo:**
    - Całość aplikacji została zabezpieczona przy użyciu **Spring Security oraz tokenów JWT**, co zapewnia bezpieczne uwierzytelnianie i autoryzację.
