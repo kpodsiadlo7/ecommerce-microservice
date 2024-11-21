@@ -51,7 +51,7 @@ Aplikacja została zaprojektowana z myślą o spójnej i bezpiecznej komunikacji
 ## 2. Pobieranie listy produktów
 1. Użytkownik, posiadając token JWT, wysyła żądanie do **API Gateway** o pobranie listy produktów.  
 2. **API Gateway** przesyła żądanie do **UserManagement**, aby:
-   - Zweryfikować token JWT (czy użytkownik ma uprawnienia do tego endpointu i czy token nie wygasł).  
+   - Zweryfikować token JWT (czy token jest poprawny i czy nie wygasł).  
    - Jeśli token jest poprawny, **UserManagement** generuje nowy token, uprawniony do komunikacji z **ProductManagement**, oraz przesyła informacje o użytkowniku do **API Gateway** w tokenie JWT.  
 3. **API Gateway** przesyła żądanie do **ProductManagement** wraz z nowym tokenem, a **ProductManagement** zwraca listę dostępnych produktów dla danego użytkownika.
 
