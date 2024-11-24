@@ -35,9 +35,7 @@ Prosty schemat architektoniczny
 
 ---
 
-User story
-
-# Story - Przepływ działania aplikacji
+# User Story - Przepływ działania aplikacji
 
 Aplikacja została zaprojektowana z myślą o spójnej i bezpiecznej komunikacji między mikroserwisami, opierając się na **API Gateway**, tokenach **JWT** oraz **RabbitMQ**. Poniżej przedstawiono krok po kroku główne przypadki użycia:
 
